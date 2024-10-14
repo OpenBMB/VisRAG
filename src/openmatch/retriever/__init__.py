@@ -1,0 +1,1 @@
+from .dense_retriever import distributed_parallel_retrieve, distributed_parallel_self_retrieve
