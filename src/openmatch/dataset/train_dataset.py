@@ -152,7 +152,7 @@ class MMDRTrainDataset(TrainDatasetBase):
                 pos = example['text']
                 passages = [{'text': pos, 'image': None, 'instruction': ''}]
             
-            query = 'Represent this query for retrieving relavant documents: ' + query
+            query = 'Represent this query for retrieving relevant documents: ' + query
                    
             query_ = [{'text': query, 'image': None, 'instruction': ''}]
             

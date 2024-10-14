@@ -42,7 +42,7 @@ do
     echo "QUERY_PATH: $QUERY_PATH" 
     echo "QRELS_PATH: $QRELS_PATH" 
 
-    QUERY_TEMPLATE="Represent this query for retrieving relavant documents: <query>"
+    QUERY_TEMPLATE="Represent this query for retrieving relevant documents: <query>"
     CORPUS_TEMPLATE="<text>"
     
     TORCH_DISTRIBUTED_DEBUG=DETAIL torchrun \

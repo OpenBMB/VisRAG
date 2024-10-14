@@ -83,7 +83,7 @@ passages = [
     Image.open(os.path.join(script_dir, 'test_image/dog.jpg')).convert('RGB'),
 ]
 
-INSTRUCTION = "Represent this query for retrieving relavant documents: "
+INSTRUCTION = "Represent this query for retrieving relevent documents: "
 queries = [INSTRUCTION + query for query in queries]
 
 embeddings_query = encode(queries)
