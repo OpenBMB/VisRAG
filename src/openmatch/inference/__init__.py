@@ -1,0 +1,1 @@
+from .inference import distributed_parallel_embedding_inference
