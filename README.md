@@ -104,7 +104,7 @@ def encode(text_or_image_list):
     return embeddings
 
 tokenizer = AutoTokenizer.from_pretrained("openbmb/VisRAG-Ret", trust_remote_code=True)
-model = AutoModel.from_pretrained("openbmb/VisRAG-Ret", trust_remote_code=True)
+model = AutoModel.from_pretrained("openbmb/VisRAG-Ret", torch_dtype=torch.bfloat16, trust_remote_code=True)
 model.eval()
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
