@@ -34,8 +34,6 @@ cd ..
 
 Our training dataset of 362,110 Query-Document (Q-D) Pairs for **VisRAG-Ret** is comprised of train sets of openly available academic datasets (34%) and a synthetic dataset made up of pages from web-crawled PDF documents and augmented with VLM-generated (GPT-4o) pseudo-queries (66%). 
 
-Data coming soon
-
 ```bash
 bash scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspeed.json 1e-5 false wmean causal 1 true 2 false <model_path> <repository_name>
 ```
@@ -48,9 +46,6 @@ The generation part does not use any fine-tuning; we directly use off-the-shelf 
 ## Evaluation
 
 ### VisRAG-Ret
-
-Data coming soon
-
 ```bash
 bash scripts/eval_retriever/eval.sh 512 2048 16 8 wmean causal ArxivQA,ChartQA,MP-DocVQA,InfoVQA,PlotQA,SlideVQA <ckpt_path>
 ```
