@@ -121,8 +121,9 @@ def encode(text_or_image_list):
     embeddings = F.normalize(reps, p=2, dim=1).detach().cpu().numpy()
     return embeddings
 
-tokenizer = AutoTokenizer.from_pretrained("openbmb/VisRAG-Ret", trust_remote_code=True)
-model = AutoModel.from_pretrained("openbmb/VisRAG-Ret", torch_dtype=torch.bfloat16, trust_remote_code=True)
+model_name_or_path = "openbmb/VisRAG-Ret"
+tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, trust_remote_code=True)
+model = AutoModel.from_pretrained(model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
 model.eval()
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
