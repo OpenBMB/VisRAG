@@ -2,7 +2,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2410.10594-ff0000.svg?style=for-the-badg)](https://arxiv.org/abs/2410.10594)
 [![Hugging Face](https://img.shields.io/badge/VisRAG_Ret-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/openbmb/VisRAG-Ret)
 
-**VisRAG** is a novel vision-language model (VLM)-based RAG pipeline. In this pipeline, instead of first parsing the document to obtain text, the document is directly embedded using a VLM as an image and then retrieved to enhance the generation of a VLM.Compared to traditional text-based RAG, **VisRAG** maximizes the retention and utilization of the data information in the original documents, eliminating the information loss introduced during the parsing process.
+**VisRAG** is a novel vision-language model (VLM)-based RAG pipeline. In this pipeline, instead of first parsing the document to obtain text, the document is directly embedded using a VLM as an image and then retrieved to enhance the generation of a VLM. Compared to traditional text-based RAG, **VisRAG** maximizes the retention and utilization of the data information in the original documents, eliminating the information loss introduced during the parsing process.
 <p align="center"><img width=800 src="assets/main_figure.png"/></p>
 
 ## VisRAG Pipeline
@@ -13,7 +13,7 @@
 
 ### VisRAG-Gen
 
-In the paper, We use MiniCPM-V 2.0, MiniCPM-V 2.6 and GPT-4o as the generators. Actually you can use any VLMs you like!
+In the paper, We use MiniCPM-V 2.0, MiniCPM-V 2.6 and GPT-4o as the generators. Actually, you can use any VLMs you like!
 
 ## Setup
 
@@ -27,6 +27,7 @@ cd timm_modified
 pip install -e .
 cd ..
 ```
+Note: timm_modified is an enhanced version of the timm library that supports gradient checkpointing, which we use in our training process to reduce memory usage.
 
 ## Training
 
@@ -37,7 +38,7 @@ Our training dataset of 362,110 Query-Document (Q-D) Pairs for **VisRAG-Ret** is
 ```bash
 bash scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspeed.json 1e-5 false wmean causal 1 true 2 false <model_path> <repository_name>
 ```
-<repository_name> can be 'openbmb/VisRAG-Ret-Train-In-domain-data' or 'openbmb/VisRAG-Ret-Train-Synthetic-data'. 
+`<repository_name>` can be either `openbmb/VisRAG-Ret-Train-In-domain-data` or `openbmb/VisRAG-Ret-Train-Synthetic-data`. If you're training with datasets downloaded from the Hugging Face repository, make sure to remove the `--from_hf_repo` line from `train.sh` and update the `DATASET_PATH` parameter in `train.sh` to point to the local directory containing the dataset.
 
 ### VisRAG-Gen
 
@@ -50,7 +51,7 @@ The generation part does not use any fine-tuning; we directly use off-the-shelf 
 bash scripts/eval_retriever/eval.sh 512 2048 16 8 wmean causal ArxivQA,ChartQA,MP-DocVQA,InfoVQA,PlotQA,SlideVQA <ckpt_path>
 ```
 
-The parameters mentioned above is what we use in our paper, you can use them to reproduce the results in the paper.
+The parameters mentioned above are what we use in our paper, you can use them to reproduce the results in the paper.
 
 ### VisRAG-Gen
 
