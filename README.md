@@ -36,13 +36,13 @@ Note: timm_modified is an enhanced version of the timm library that supports gra
 Our training dataset of 362,110 Query-Document (Q-D) Pairs for **VisRAG-Ret** is comprised of train sets of openly available academic datasets (34%) and a synthetic dataset made up of pages from web-crawled PDF documents and augmented with VLM-generated (GPT-4o) pseudo-queries (66%). 
 
 ```bash
-bash scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspeed.json 1e-5 false wmean causal 1 true 2 false <model_path> <repository_name>
+bash scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspeed.json 1e-5 false wmean causal 1 true 2 false <model_dir> <dataset_name_or_path>
 ```
-`<repository_name>` can be either `openbmb/VisRAG-Ret-Train-In-domain-data` or `openbmb/VisRAG-Ret-Train-Synthetic-data`. If you're training with datasets downloaded from the Hugging Face repository, make sure to remove the `--from_hf_repo` line from `train.sh` and update the `DATASET_PATH` parameter in `train.sh` to point to the local directory containing the dataset.
+Note: `<dataset_name_or_path>` can be `openbmb/VisRAG-Ret-Train-In-domain-data`, `openbmb/VisRAG-Ret-Train-Synthetic-data` or a local directory. If you're using datasets downloaded from the Hugging Face repository, remember to remove the `--from_hf_repo` line from `train.sh` at the same time.
 
 ### VisRAG-Gen
 
-The generation part does not use any fine-tuning; we directly use off-the-shelf LLMs/VLMs for generation.
+The generation part does not use any fine-tuning, we directly use off-the-shelf LLMs/VLMs for generation.
 
 ## Evaluation
 
@@ -51,12 +51,13 @@ The generation part does not use any fine-tuning; we directly use off-the-shelf 
 bash scripts/eval_retriever/eval.sh 512 2048 16 8 wmean causal ArxivQA,ChartQA,MP-DocVQA,InfoVQA,PlotQA,SlideVQA <ckpt_path>
 ```
 
-The parameters mentioned above are what we use in our paper, you can use them to reproduce the results in the paper.
+Note: 
+1. The parameters listed above are the ones used in our paper. You can use them to reproduce the results.
+2. The script is set to use a remote dataset from Hugging Face. If you're evaluating with datasets downloaded locally, make sure to remove the `--from_hf_repo` line from `eval.sh` and update the `QRELS_PATH`, `QUERY_PATH`, and `CORPUS_PATH` parameters in `eval.sh` to point to the local directories containing the dataset.
 
 ### VisRAG-Gen
 
 Coming soon
-
 
 ## Usage
 
