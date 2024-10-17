@@ -78,7 +78,7 @@ def main():
         from openmatch.modeling.modeling_siglip.tokenization_siglip import SiglipTokenizer as tokenizer_cls
     elif "CPM-2B" in config_json["_name_or_path"]:
         from transformers import AutoTokenizer as tokenizer_cls
-    elif "MiniCPM-V-2.0" in config_json["_name_or_path"]:
+    elif "MiniCPM-V-2" in config_json["_name_or_path"]:
         from openmatch.modeling.modeling_minicpmv.modeling_minicpmv import LlamaTokenizerWrapper as tokenizer_cls
     else:
         tokenizer_cls = AutoTokenizer

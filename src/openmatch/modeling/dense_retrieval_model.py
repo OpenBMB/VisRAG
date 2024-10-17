@@ -255,7 +255,7 @@ class DRModel(nn.Module):
             from openmatch.modeling.modeling_siglip.configuration_siglip import SiglipConfig as config_cls
             from openmatch.modeling.modeling_siglip.configuration_siglip import SiglipTextConfig, SiglipVisionConfig
             from openmatch.modeling.modeling_siglip.modeling_siglip import SiglipModel as model_class
-        elif "MiniCPM-V-2.0" in config_json["_name_or_path"]:
+        elif "MiniCPM-V-2" in config_json["_name_or_path"]:
             from openmatch.modeling.modeling_visrag_ret.modeling_visrag_ret import VisRAG_Ret as model_class
             from openmatch.modeling.modeling_minicpmv.modeling_minicpmv import MiniCPMVConfig as config_cls
         else: # other model
