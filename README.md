@@ -38,7 +38,9 @@ Our training dataset of 362,110 Query-Document (Q-D) Pairs for **VisRAG-Ret** is
 ```bash
 bash scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspeed.json 1e-5 false wmean causal 1 true 2 false <model_dir> <dataset_name_or_path>
 ```
-Note: `<dataset_name_or_path>` can be `openbmb/VisRAG-Ret-Train-In-domain-data`, `openbmb/VisRAG-Ret-Train-Synthetic-data` or a local directory. If you're using datasets downloaded from the Hugging Face repository, remember to remove the `--from_hf_repo` line from `train.sh` at the same time.
+Note:
+1. The parameters listed above are those used in our paper and can be used to reproduce the results.
+2. `<dataset_name_or_path>` can be `openbmb/VisRAG-Ret-Train-In-domain-data`, `openbmb/VisRAG-Ret-Train-Synthetic-data` or a local directory. If you're using datasets downloaded from the Hugging Face repository, make sure to remove the `--from_hf_repo` line from `train.sh`.
 
 ### VisRAG-Gen
 
@@ -52,8 +54,8 @@ bash scripts/eval_retriever/eval.sh 512 2048 16 8 wmean causal ArxivQA,ChartQA,M
 ```
 
 Note: 
-1. The parameters listed above are the ones used in our paper. You can use them to reproduce the results.
-2. The script is set to use a remote dataset from Hugging Face. If you're evaluating with datasets downloaded locally, make sure to remove the `--from_hf_repo` line from `eval.sh` and update the `QRELS_PATH`, `QUERY_PATH`, and `CORPUS_PATH` parameters in `eval.sh` to point to the local directories containing the dataset.
+1. The parameters listed above are those used in our paper and can be used to reproduce the results.
+2. The evaluation script is configured to use datasets from the Hugging Face repository by default. If you're evaluating with datasets downloaded locally, ensure that you remove the `--from_hf_repo` line from `eval.sh` and update the `QRELS_PATH`, `QUERY_PATH`, and `CORPUS_PATH` parameters in `eval.sh` to point to the local files.
 
 ### VisRAG-Gen
 
