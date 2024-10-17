@@ -58,8 +58,24 @@ Note:
 2. The evaluation script is configured to use datasets from the Hugging Face repository by default. If you're evaluating with datasets downloaded locally, ensure that you remove the `--from_hf_repo` line from `eval.sh` and update the `QRELS_PATH`, `QUERY_PATH`, and `CORPUS_PATH` parameters in `eval.sh` to point to the local files.
 
 ### VisRAG-Gen
-
-Coming soon
+There are three settings in our generation: text-based generation, single-image-VLM-based generation and multi-image-VLM-based generation. Under single-image-VLM-based generation, there are two additional settings: page concatenation and weighted selection. For detailed information about these settings, please refer to our paper.
+```bash
+python scripts/generate/generate.py \
+--model_name <model_name> \
+--dataset_name <dataset_name> \
+--rank <process_rank> \
+--world_size <world_size> \
+--use_positive_sample <use_positive_sample> \
+--topk <number of docs retrieved for generation> \
+--results_root_dir <retrieval_results_dir> \
+--task_type <task_type> \
+--concatenate_type <image_concatenate_type> \
+--ocr_type <ocr_type> \
+```
+Note:
+1. `use_positive_sample` indicates whether to use retrieved documents or just the positive document for the query. `topk` and `results_root_dir` are only needed when `use_positive_sample` is set to 0. The `results_root_dir` should be organized as follows: `results_root_dir/dataset_name/*.trec`.
+2. `concatenate_type` is needed only when `task_type` is set to `page_concatenation`. It specifies the type of concatenation used to combine several images.
+3. `ocr_type` is required only when `task_type` is set to `text`. It indicates the type of OCR tool used to obtain the OCR results from an image.
 
 ## Usage
 
