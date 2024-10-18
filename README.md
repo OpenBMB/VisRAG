@@ -28,7 +28,7 @@ pip install -e .
 cd ..
 ```
 Note:
-1. timm_modified is an enhanced version of the timm library that supports gradient checkpointing, which we use in our training process to reduce memory usage.
+1. `timm_modified` is an enhanced version of the `timm` library that supports gradient checkpointing, which we use in our training process to reduce memory usage.
 
 ## Training
 
