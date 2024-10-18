@@ -42,6 +42,7 @@ bash scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspe
 Note:
 1. The parameters listed above are those used in our paper and can be used to reproduce the results.
 2. `<dataset_name_or_path>` can be `openbmb/VisRAG-Ret-Train-In-domain-data`, `openbmb/VisRAG-Ret-Train-Synthetic-data` or a local directory. If you're using datasets downloaded from the Hugging Face repository, make sure to remove the `--from_hf_repo` line from `train.sh`.
+3. If you're using a locally downloaded dataset, ensure that you create a metadata.json file in the directory, which includes a `length` field indicating the number of samples in the dataset.
 
 ### VisRAG-Gen
 
