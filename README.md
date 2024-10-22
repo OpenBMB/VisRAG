@@ -153,5 +153,5 @@ print(scores.tolist())
 
 ## Contact
 
-- Shi Yu: yushi17@foxmail.com
+- Shi Yu: yus21@mails.tsinghua.edu.cn
 - Chaoyue Tang: tcy006@gmail.com
