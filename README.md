@@ -42,9 +42,10 @@ Our training dataset of 362,110 Query-Document (Q-D) Pairs for **VisRAG-Ret** is
 bash scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspeed.json 1e-5 false wmean causal 1 true 2 false <model_dir> <dataset_name_or_path>
 ```
 Note:
-1. The parameters listed above are those used in our paper and can be used to reproduce the results.
-2. `<dataset_name_or_path>` can be `openbmb/VisRAG-Ret-Train-In-domain-data`, `openbmb/VisRAG-Ret-Train-Synthetic-data` or a local directory. If you're using datasets downloaded from the Hugging Face repository, make sure to remove the `--from_hf_repo` line from `train.sh`.
-3. If you're using a locally downloaded dataset, ensure that you create a metadata.json file in the directory, which includes a `length` field indicating the number of samples in the dataset.
+1. Our train data can be found in the `VisRAG` Collection on Hugging Face, which is referenced at the beginning of this page.
+2. The parameters listed above are those used in our paper and can be used to reproduce the results.
+3. `<dataset_name_or_path>` can be `openbmb/VisRAG-Ret-Train-In-domain-data`, `openbmb/VisRAG-Ret-Train-Synthetic-data` or a local directory. If you're using datasets downloaded from the Hugging Face repository, make sure to remove the `--from_hf_repo` line from `train.sh`.
+4. If you're using a locally downloaded dataset, ensure that you create a metadata.json file in the directory, which includes a `length` field indicating the number of samples in the dataset.
 
 ### VisRAG-Gen
 
