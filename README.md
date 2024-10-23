@@ -8,7 +8,7 @@
  <a href="#-introduction"> 📖 Introduction </a> •
  <a href="#-news">🎉 News</a> •
  <a href="#-visrag-pipeline">✨ VisRAG Pipeline</a> •
- <a href="#-setup">⚙️ Setup</a> •
+ <a href="#%EF%B8%8F-setup">⚙️ Setup</a> •
  <a href="#%EF%B8%8F-training">⚡️ Training</a> 
 </p>
 <p align="center">•
