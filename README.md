@@ -58,8 +58,9 @@ bash scripts/eval_retriever/eval.sh 512 2048 16 8 wmean causal ArxivQA,ChartQA,M
 ```
 
 Note: 
-1. The parameters listed above are those used in our paper and can be used to reproduce the results.
-2. The evaluation script is configured to use datasets from the Hugging Face repository by default. If you're evaluating with datasets downloaded locally, ensure that you remove the `--from_hf_repo` line from `eval.sh` and update the `QRELS_PATH`, `QUERY_PATH`, and `CORPUS_PATH` parameters in `eval.sh` to point to the local files.
+1. Our test data can be found in the `VisRAG` Collection on Hugging Face, which is referenced at the beginning of this page.
+2. The parameters listed above are those used in our paper and can be used to reproduce the results.
+3. The evaluation script is configured to use datasets from the Hugging Face repository by default. If you're evaluating with datasets downloaded locally, ensure that you remove the `--from_hf_repo` line from `eval.sh` and update the `QRELS_PATH`, `QUERY_PATH`, and `CORPUS_PATH` parameters in `eval.sh` to point to the local files.
 
 ### VisRAG-Gen
 There are three settings in our generation: text-based generation, single-image-VLM-based generation and multi-image-VLM-based generation. Under single-image-VLM-based generation, there are two additional settings: page concatenation and weighted selection. For detailed information about these settings, please refer to our paper.
