@@ -4,25 +4,39 @@
 [![Hugging Face](https://img.shields.io/badge/VisRAG_Ret-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/openbmb/VisRAG-Ret)
 [![Hugging Face](https://img.shields.io/badge/VisRAG_Collection-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/collections/openbmb/visrag-6717bbfb471bb018a49f1c69)
 
+<p align="center">•
+ <a href="#-introduction"> 📖 Introduction </a> •
+ <a href="#-news">🎉 News</a> •
+ <a href="#-visrag-pipeline">✨ VisRAG Pipeline</a> •
+ <a href="-training">⚡️ Training</a> 
+</p>
+<p align="center">•
+ <a href="#-evaluation">📃 Evaluation</a> •
+ <a href="#-usage">🔧 Usage</a> •
+ <a href="#-license">📄 Lisense</a>•
+ <a href="-star-history">📈 Star History</a>
+</p>
+
+# 📖 Introduction
 **VisRAG** is a novel vision-language model (VLM)-based RAG pipeline. In this pipeline, instead of first parsing the document to obtain text, the document is directly embedded using a VLM as an image and then retrieved to enhance the generation of a VLM. Compared to traditional text-based RAG, **VisRAG** maximizes the retention and utilization of the data information in the original documents, eliminating the information loss introduced during the parsing process.
 <p align="center"><img width=800 src="assets/main_figure.png"/></p>
 
-## 🎉 News
+# 🎉 News
 
-* 20241015: Released our train data and test data on Hugging Face which can be found in the [VisRAG](https://huggingface.co/collections/openbmb/visrag-6717bbfb471bb018a49f1c69) Collection.
-* 20241014: Released our [paper](https://arxiv.org/abs/2410.10594) on arXiv. Released our [Model](https://huggingface.co/openbmb/VisRAG-Ret) on Hugging Face.
+* 20241015: Released our train data and test data on Hugging Face which can be found in the [VisRAG](https://huggingface.co/collections/openbmb/visrag-6717bbfb471bb018a49f1c69) Collection on Hugging Face. It is referenced at the beginning of this page.
+* 20241014: Released our [Paper](https://arxiv.org/abs/2410.10594) on arXiv. Released our [Model](https://huggingface.co/openbmb/VisRAG-Ret) on Hugging Face.
 
-## VisRAG Pipeline
+# ✨ VisRAG Pipeline
 
-### VisRAG-Ret
+## VisRAG-Ret
 
 **VisRAG-Ret** is a document embedding model built on [MiniCPM-V 2.0](https://huggingface.co/openbmb/MiniCPM-V-2), a vision-language model that integrates [SigLIP](https://huggingface.co/google/siglip-so400m-patch14-384) as the vision encoder and [MiniCPM-2B](https://huggingface.co/openbmb/MiniCPM-2B-sft-bf16) as the language model.
 
-### VisRAG-Gen
+## VisRAG-Gen
 
 In the paper, We use MiniCPM-V 2.0, MiniCPM-V 2.6 and GPT-4o as the generators. Actually, you can use any VLMs you like!
 
-## Setup
+# ⚙️ Setup
 
 ```bash
 conda create --name VisRAG python==3.10.8
@@ -37,9 +51,9 @@ cd ..
 Note:
 1. `timm_modified` is an enhanced version of the `timm` library that supports gradient checkpointing, which we use in our training process to reduce memory usage.
 
-## Training
+# ⚡️ Training
 
-### VisRAG-Ret
+## VisRAG-Ret
 
 Our training dataset of 362,110 Query-Document (Q-D) Pairs for **VisRAG-Ret** is comprised of train sets of openly available academic datasets (34%) and a synthetic dataset made up of pages from web-crawled PDF documents and augmented with VLM-generated (GPT-4o) pseudo-queries (66%). 
 
@@ -52,13 +66,13 @@ Note:
 3. `<dataset_name_or_path>` can be `openbmb/VisRAG-Ret-Train-In-domain-data`, `openbmb/VisRAG-Ret-Train-Synthetic-data` or a local directory. If you're using datasets downloaded from the Hugging Face repository, make sure to remove the `--from_hf_repo` line from `train.sh`.
 4. If you're using a locally downloaded dataset, ensure that you create a metadata.json file in the directory, which includes a `length` field indicating the number of samples in the dataset.
 
-### VisRAG-Gen
+## VisRAG-Gen
 
 The generation part does not use any fine-tuning, we directly use off-the-shelf LLMs/VLMs for generation.
 
-## Evaluation
+# 📃 Evaluation
 
-### VisRAG-Ret
+## VisRAG-Ret
 ```bash
 bash scripts/eval_retriever/eval.sh 512 2048 16 8 wmean causal ArxivQA,ChartQA,MP-DocVQA,InfoVQA,PlotQA,SlideVQA <ckpt_path>
 ```
@@ -68,7 +82,7 @@ Note:
 2. The parameters listed above are those used in our paper and can be used to reproduce the results.
 3. The evaluation script is configured to use datasets from the Hugging Face repository by default. If you're evaluating with datasets downloaded locally, ensure that you remove the `--from_hf_repo` line from `eval.sh` and update the `QRELS_PATH`, `QUERY_PATH`, and `CORPUS_PATH` parameters in `eval.sh` to point to the local files.
 
-### VisRAG-Gen
+## VisRAG-Gen
 There are three settings in our generation: text-based generation, single-image-VLM-based generation and multi-image-VLM-based generation. Under single-image-VLM-based generation, there are two additional settings: page concatenation and weighted selection. For detailed information about these settings, please refer to our paper.
 ```bash
 python scripts/generate/generate.py \
@@ -88,9 +102,9 @@ Note:
 2. `concatenate_type` is needed only when `task_type` is set to `page_concatenation`. It specifies the type of concatenation used to combine several images.
 3. `ocr_type` is required only when `task_type` is set to `text`. It indicates the type of OCR tool used to obtain the OCR results from an image.
 
-## Usage
+# 🔧 Usage
 
-### VisRAG-Ret
+## VisRAG-Ret
 
 Model on Hugging Face: https://huggingface.co/openbmb/VisRAG-Ret
 
@@ -154,18 +168,18 @@ print(scores.tolist())
 ```
 
 
-## License
+# 📄 License
 
 * The code in this repo is released under the [Apache-2.0](https://github.com/OpenBMB/MiniCPM/blob/main/LICENSE) License. 
 * The usage of **VisRAG-Ret** model weights must strictly follow [MiniCPM Model License.md](https://github.com/OpenBMB/MiniCPM/blob/main/MiniCPM%20Model%20License.md).
 * The models and weights of **VisRAG-Ret** are completely free for academic research. After filling out a ["questionnaire"](https://modelbest.feishu.cn/share/base/form/shrcnpV5ZT9EJ6xYjh3Kx0J6v8g) for registration, **VisRAG-Ret** weights are also available for free commercial use.
 
-## Contact
+# 📧 Contact
 
 - Shi Yu: yus21@mails.tsinghua.edu.cn
 - Chaoyue Tang: tcy006@gmail.com
 
-## Star History
+# 📈 Star History
 
 <a href="https://star-history.com/#openbmb/VisRAG&Date">
  <picture>
