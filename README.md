@@ -13,7 +13,7 @@
 <p align="center">•
  <a href="#-evaluation">📃 Evaluation</a> •
  <a href="#-usage">🔧 Usage</a> •
- <a href="#-license">📄 Lisense</a>•
+ <a href="#-license">📄 Lisense</a> •
  <a href="-star-history">📈 Star History</a>
 </p>
 
