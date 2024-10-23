@@ -159,3 +159,13 @@ print(scores.tolist())
 
 - Shi Yu: yus21@mails.tsinghua.edu.cn
 - Chaoyue Tang: tcy006@gmail.com
+
+## Star History
+
+<a href="https://star-history.com/#openbmb/VisRAG&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=openbmb/VisRAG&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=openbmb/VisRAG&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=openbmb/VisRAG&type=Date" />
+ </picture>
+</a>
