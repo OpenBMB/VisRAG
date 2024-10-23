@@ -8,12 +8,14 @@
  <a href="#-introduction"> 📖 Introduction </a> •
  <a href="#-news">🎉 News</a> •
  <a href="#-visrag-pipeline">✨ VisRAG Pipeline</a> •
+ <a href="#-setup">⚙️ Setup</a> •
  <a href="#%EF%B8%8F-training">⚡️ Training</a> 
 </p>
 <p align="center">•
  <a href="#-evaluation">📃 Evaluation</a> •
  <a href="#-usage">🔧 Usage</a> •
  <a href="#-license">📄 Lisense</a> •
+ <a href="#-contact">📧 Contact</a> •
  <a href="#-star-history">📈 Star History</a>
 </p>
 
