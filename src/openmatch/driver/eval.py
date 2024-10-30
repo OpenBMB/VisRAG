@@ -78,12 +78,18 @@ def main():
     logger.info("Model parameters %s", model_args)
     
     config_json = json.load(open(os.path.join(model_args.model_name_or_path, 'config.json')))
+
+    assert "_name_or_path" in config_json or "model_name_or_path" in config_json, "building model will need to determine the modeling file, please make sure _name_or_path or model_name_or_path is in the config.json"
+    if "_name_or_path" in config_json:
+        name = config_json["_name_or_path"]
+    else:
+        name = config_json["model_name_or_path"]
     
-    if "MiniCPM-V-2" in config_json["_name_or_path"] or 'VisRAG' in config_json["_name_or_path"]:
+    if "MiniCPM-V-2" in name or 'VisRAG' in name:
         from openmatch.modeling.modeling_minicpmv.modeling_minicpmv import LlamaTokenizerWrapper as tokenizer_cls
-    elif "CPM-2B" in config_json["_name_or_path"]:
+    elif "CPM-2B" in name:
         from transformers import AutoTokenizer as tokenizer_cls
-    elif "siglip" in config_json['_name_or_path'] or "SigLIP" in config_json['_name_or_path']:
+    elif "siglip" in name or "SigLIP" in name:
         from openmatch.modeling.modeling_siglip.tokenization_siglip import SiglipTokenizer as tokenizer_cls
     else:
         raise NotImplementedError("your model config arch is not supported")
@@ -115,7 +121,13 @@ def main():
             query_file = [data_args.query_path]
         else:
             if os.path.exists(data_args.query_path):
-                query_file = [data_args.query_path]
+                if os.path.isdir(data_args.query_path):
+                    query_file = [glob.glob(os.path.join(data_args.query_path, "*.parquet"))]
+                    if query_file == []:
+                        raise ValueError(f"query_dir {data_args.query_path} does not contain any .parquet files, please check.")
+                else:
+                    assert data_args.query_path.endswith('.parquet'), f"query file {data_args.query_path} should be a .parquet file."
+                    query_file = [data_args.query_path]
             else:
                 raise ValueError(f"--query_path {data_args.query_path} does not exist, please check.")
         
@@ -132,7 +144,8 @@ def main():
             process_index=encoding_args.process_index,
             filter_fn=None,
             cache_dir=data_args.data_cache_dir,
-            content='queries'
+            content='queries',
+            from_hf_repo=data_args.from_hf_repo
         )
     
     
@@ -160,7 +173,9 @@ def main():
                 raise ValueError(f"--corpus_path {data_args.corpus_path} does not exist, please check.")
             
             if os.path.isdir(data_args.corpus_path): # if it is a directory
-                corpus_file = [data_args.corpus_path]
+                corpus_file = [glob.glob(os.path.join(data_args.corpus_path, "*.parquet"))]
+                if corpus_file == []:
+                    raise ValueError(f"corpus_dir {data_args.corpus_path} does not contain any .parquet files, please check.")
                 logger.info(f"corpus_dir: {data_args.corpus_path}")
             else: # it is a file
                 assert data_args.corpus_path.endswith('.parquet'), f"corpus file {data_args.corpus_path} should be a .parquet file."
@@ -179,7 +194,8 @@ def main():
             process_index=encoding_args.process_index,
             cache_dir=data_args.data_cache_dir,
             filter_fn=None,
-            content='corpus'
+            content='corpus',
+            from_hf_repo=data_args.from_hf_repo
         )
         
         logger.info("Encoding corpus")
@@ -206,6 +222,7 @@ def main():
         else:
             if os.path.exists(data_args.qrels_path): 
                 qrels_path = data_args.qrels_path
+                assert qrels_path.endswith('.tsv'), f"qrels file {qrels_path} should be a .tsv file."
                 logger.info(f"Loading qrels from local file.")
                 qrels = load_beir_qrels(qrels_path)
                 logger.info(f"qrels load finished.")

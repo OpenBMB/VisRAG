@@ -247,15 +247,20 @@ class DRModel(nn.Module):
         head_q = head_p = None
         config_json = json.load(open(os.path.join(model_name_or_path, 'config.json')))
 
-        assert "_name_or_path" in config_json, "building model will need to determine the modeling file, please make sure _name_or_path exists in config.json"
-        
+        assert "_name_or_path" in config_json or "model_name_or_path" in config_json, "building model will need to determine the modeling file, please make sure _name_or_path or model_name_or_path is in the config.json"
+        if "_name_or_path" in config_json:
+            name = config_json["_name_or_path"]
+        else:
+            name = config_json["model_name_or_path"]
+
+
         # ------------- config and model --------------
-        if "siglip" in config_json['_name_or_path'] or "SigLIP" in config_json['_name_or_path']:
+        if "siglip" in name or "SigLIP" in name:
             logging.info("using SIGLIP model, load modeling from openmatch.modeling.modeling_siglip")
             from openmatch.modeling.modeling_siglip.configuration_siglip import SiglipConfig as config_cls
             from openmatch.modeling.modeling_siglip.configuration_siglip import SiglipTextConfig, SiglipVisionConfig
             from openmatch.modeling.modeling_siglip.modeling_siglip import SiglipModel as model_class
-        elif "MiniCPM-V-2" in config_json["_name_or_path"]:
+        elif "MiniCPM-V-2" in name or "VisRAG" in name:
             from openmatch.modeling.modeling_visrag_ret.modeling_visrag_ret import VisRAG_Ret as model_class
             from openmatch.modeling.modeling_minicpmv.modeling_minicpmv import MiniCPMVConfig as config_cls
         else: # other model
@@ -266,7 +271,7 @@ class DRModel(nn.Module):
         
         logger.info(f"model class = {model_class}")
         
-        if "siglip" in config_json['_name_or_path'] or "SigLIP" in config_json['_name_or_path']:
+        if "siglip" in name or "SigLIP" in name:
             text_config = SiglipTextConfig.from_pretrained(model_name_or_path)
             vision_config = SiglipVisionConfig.from_pretrained(model_name_or_path)
             config = config_cls.from_text_vision_configs(text_config, vision_config)
@@ -312,7 +317,7 @@ class DRModel(nn.Module):
                 **hf_kwargs
             )
         
-        if "siglip" in config_json['_name_or_path'] or "SigLIP" in config_json['_name_or_path']:
+        if "siglip" in name or "SigLIP" in name:
             lm_q.processor = SiglipProcessor.from_pretrained(model_name_or_path)
         
         

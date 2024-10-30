@@ -73,12 +73,18 @@ def main():
     set_seed(training_args.seed)
 
     config_json = json.load(open(os.path.join(model_args.model_name_or_path, 'config.json')))
+
+    assert "_name_or_path" in config_json or "model_name_or_path" in config_json, "building model will need to determine the modeling file, please make sure _name_or_path or model_name_or_path is in the config.json"
+    if "_name_or_path" in config_json:
+        name = config_json["_name_or_path"]
+    else:
+        name = config_json["model_name_or_path"]
     
-    if "siglip" in config_json['_name_or_path'] or "SigLIP" in config_json['_name_or_path']:
+    if "siglip" in name or "SigLIP" in name:
         from openmatch.modeling.modeling_siglip.tokenization_siglip import SiglipTokenizer as tokenizer_cls
-    elif "CPM-2B" in config_json["_name_or_path"]:
+    elif "CPM-2B" in name:
         from transformers import AutoTokenizer as tokenizer_cls
-    elif "MiniCPM-V-2" in config_json["_name_or_path"]:
+    elif "MiniCPM-V-2" in name or "VisRAG" in name:
         from openmatch.modeling.modeling_minicpmv.modeling_minicpmv import LlamaTokenizerWrapper as tokenizer_cls
     else:
         tokenizer_cls = AutoTokenizer

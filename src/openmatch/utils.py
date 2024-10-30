@@ -311,7 +311,7 @@ def get_qrels_from_hf_repo(dataset_name):
     """
     Get qrels from Hugging Face datasets repository.
     """
-    dataset = datasets.load_dataset(dataset_name, 'qrels')
+    dataset = datasets.load_dataset(dataset_name, 'qrels')['train']
     qrels = {}
     for i in range(len(dataset)):
         qid = dataset[i]["query-id"]

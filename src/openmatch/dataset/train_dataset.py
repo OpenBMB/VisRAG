@@ -51,6 +51,10 @@ class TrainDatasetBase:
                 if data_args.train_dir is None
                 else [data_args.train_dir] if self.from_hf_repo else glob.glob(os.path.join(data_args.train_dir, "*.parquet")) 
             )
+
+            if not self.from_hf_repo:
+                if len(self.data_files) == 0:
+                    raise FileNotFoundError(f"Cannot find any parquet files in {data_args.train_dir}")
         else:
             self.data_files = [data_args.eval_path]
 
@@ -62,11 +66,11 @@ class StreamTrainDatasetMixin(IterableDataset):
     def _prepare_data(self, data_args, shuffle_seed, cache_dir):
         super()._prepare_data(data_args, shuffle_seed, cache_dir)
         if self.from_hf_repo:
-            logger.info("load dataset from huggingface...")
+            logger.info("Loading dataset from HuggingFace repo.")
             self.dataset = load_dataset(
                 self.data_files[0], streaming=True, cache_dir=cache_dir
             )["train"]
-            logger.info(f"loaded dataset from huggingface.")
+            logger.info(f"Dataset loaded from HuggingFace repo.")
         else:
             logger.info("load dataset from local files...")
             self.dataset = load_dataset(
@@ -80,8 +84,9 @@ class StreamTrainDatasetMixin(IterableDataset):
     def __len__(self):
         if self.data_args.train_dir is not None:
             if (self.from_hf_repo):
-                logger.info("load dataset length from huggingface...")
+                logger.info("Loading dataset length from HuggingFace repo.")
                 return self.dataset.info.splits['train'].num_examples
+                logger.info(f"Dataset length loaded from HuggingFace repo.")
             else:
                 logger.info("load dataset length from metadata...")
                 metadata_path = os.path.join(self.data_args.train_dir, "metadata.json")

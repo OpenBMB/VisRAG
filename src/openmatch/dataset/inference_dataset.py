@@ -70,7 +70,8 @@ class InferenceDataset:
         process_index: int = 0,
         filter_fn: Callable = lambda x: True,
         cache_dir: str = None,
-        content: str = None
+        content: str = None,
+        from_hf_repo: bool = True
     ):
         self.cache_dir = cache_dir
         self.data_files = data_files
@@ -79,16 +80,9 @@ class InferenceDataset:
         self.processor = processor
         self.max_len = max_len
         self.template = template
-        self.full_tokenization = full_tokenization
-        self.dataset_repo = [
-            'openbmb/VisRAG-Ret-Test-ArxivQA',
-            'openbmb/VisRAG-Ret-Test-ChartQA',
-            'openbmb/VisRAG-Ret-Test-MP-DocVQA',
-            'openbmb/VisRAG-Ret-Test-InfoVQA',
-            'openbmb/VisRAG-Ret-Test-PlotQA',
-            'openbmb/VisRAG-Ret-Test-SlideVQA'
-        ]                     
+        self.full_tokenization = full_tokenization                  
         self.content = content
+        self.from_hf_repo = from_hf_repo
         
         modes = [
             "raw", # for inference is fine
@@ -137,7 +131,8 @@ class InferenceDataset:
         process_index: int = 0,
         filter_fn: Callable = lambda x: True,
         cache_dir: str = None,
-        content: str = None
+        content: str = None,
+        from_hf_repo: bool = True
     ):
         if data is not None:
             return StreamInMemoryDataset(
@@ -190,7 +185,8 @@ class InferenceDataset:
             process_index=process_index, # this is for StreamingInferenceDataset Sharding
             filter_fn=filter_fn,
             cache_dir=cache_dir,
-            content=content
+            content=content,
+            from_hf_repo=from_hf_repo
         )
 
     def _tokenize(self, example: str):
@@ -299,7 +295,7 @@ class MappingInferenceDataset(Dataset):
 class StreamParquetDataset(StreamInferenceDataset, InferenceDataset):
     def _prepare_data(self):
         
-        if (self.data_files[0] in self.dataset_repo):
+        if (self.from_hf_repo):
             logger.info(f"Loading dataset from HuggingFace repo.")
             self.dataset = load_dataset(
                 self.data_files[0], self.content, streaming=True, cache_dir=self.cache_dir
