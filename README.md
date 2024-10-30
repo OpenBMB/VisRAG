@@ -60,13 +60,13 @@ Note:
 Our training dataset of 362,110 Query-Document (Q-D) Pairs for **VisRAG-Ret** is comprised of train sets of openly available academic datasets (34%) and a synthetic dataset made up of pages from web-crawled PDF documents and augmented with VLM-generated (GPT-4o) pseudo-queries (66%). 
 
 ```bash
-bash scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspeed.json 1e-5 false wmean causal 1 true 2 false <model_dir> <dataset_name_or_path>
+bash scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspeed.json 1e-5 false wmean causal 1 true 2 false <model_dir> <repo_name_or_path>
 ```
 Note:
-1. Our train data can be found in the `VisRAG` Collection on Hugging Face, which is referenced at the beginning of this page.
+1. Our training data can be found in the `VisRAG` collection on Hugging Face, referenced at the beginning of this page. Please note that we have separated the `In-domain-data` and `Synthetic-data` due to their distinct differences. If you wish to train with the complete dataset, you’ll need to merge and shuffle them manually.
 2. The parameters listed above are those used in our paper and can be used to reproduce the results.
-3. `<dataset_name_or_path>` can be `openbmb/VisRAG-Ret-Train-In-domain-data`, `openbmb/VisRAG-Ret-Train-Synthetic-data` or a local directory. If you're using datasets downloaded from the Hugging Face repository, make sure to remove the `--from_hf_repo` line from `train.sh`.
-4. If you're using a locally downloaded dataset, ensure that you create a metadata.json file in the directory, which includes a `length` field indicating the number of samples in the dataset.
+3. The training script is configured to use datasets from Hugging Face by default. If you prefer to train using locally downloaded dataset repositories, you can modify the `DATASET_PATH` variable in the evaluation script to point to the local repository directory.
+4. `<repo_name_or_path>` can be `openbmb/VisRAG-Ret-Train-In-domain-data`, `openbmb/VisRAG-Ret-Train-Synthetic-data` or the directory path of a repository downloaded from Hugging Face.
 
 ## VisRAG-Gen
 
@@ -82,7 +82,7 @@ bash scripts/eval_retriever/eval.sh 512 2048 16 8 wmean causal ArxivQA,ChartQA,M
 Note: 
 1. Our test data can be found in the `VisRAG` Collection on Hugging Face, which is referenced at the beginning of this page.
 2. The parameters listed above are those used in our paper and can be used to reproduce the results.
-3. The evaluation script is configured to use datasets from the Hugging Face repository by default. If you're evaluating with datasets downloaded locally, ensure that you remove the `--from_hf_repo` line from `eval.sh` and update the `QRELS_PATH`, `QUERY_PATH`, and `CORPUS_PATH` parameters in `eval.sh` to point to the local files.
+3. The evaluation script is configured to use datasets from Hugging Face by default. If you prefer to evaluate using locally downloaded dataset repositories, you can modify the `CORPUS_PATH`, `QUERY_PATH`, `QRELS_PATH` variables in the evaluation script to point to the local repository directory.
 
 ## VisRAG-Gen
 There are three settings in our generation: text-based generation, single-image-VLM-based generation and multi-image-VLM-based generation. Under single-image-VLM-based generation, there are two additional settings: page concatenation and weighted selection. For detailed information about these settings, please refer to our paper.
