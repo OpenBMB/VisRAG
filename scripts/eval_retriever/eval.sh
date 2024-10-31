@@ -89,7 +89,6 @@ do
         --use_gpu \
         --phase "retrieve" \
         --retrieve_depth 10 \
-        --from_hf_repo \
 
 done
 
