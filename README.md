@@ -171,6 +171,8 @@ embeddings_doc = encode(passages)
 scores = (embeddings_query @ embeddings_doc.T)
 print(scores.tolist())
 ```
+## VisRAG-Gen
+For `VisRAG-Gen`, you can explore the `VisRAG Pipeline` on Google Colab which includes both `VisRAG-Ret` and `VisRAG-Gen` to try out this simple demonstration.
 
 
 # 📄 License
