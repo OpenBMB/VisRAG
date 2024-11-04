@@ -11,6 +11,7 @@ from transformers import AutoTokenizer as Tokenizer_class
 from openmatch.generation_utils import get_flatten_table, preprocess_text, is_numeric_data, is_within_5_percent, horizontal_concat, vertical_concat
 from openai import OpenAI
 import pandas as pd
+from datasets import load_dataset
 
 def images_to_base64_list(image_list):
     base64_list = []
@@ -90,17 +91,17 @@ def main():
     # build docid->content
     content = {}
     if (task_type == 'text'):
-        df = pd.read_parquet(corpus_path)
-        for index, row in df.iterrows():
-            docid = row['corpus-id']
-            text = row['text']
-            content[docid] = text
+        corpus_ds = load_dataset(f"openbmb/VisRAG-Ret-Test-{dataset_name}", name="corpus", split="train")
+        for i in range(len(corpus_ds)):
+            corpus_id = corpus_ds[i]['corpus-id']
+            text = corpus_ds[i]['text']
+            content[corpus_id] = text
     else:
-        df = pd.read_parquet(corpus_path)
-        for index, row in df.iterrows():
-            docid = row['corpus-id']
-            raw_bytes = row['image']['bytes']
-            content[docid] = raw_bytes
+        corpus_ds = load_dataset(f"openbmb/VisRAG-Ret-Test-{dataset_name}", name="corpus", split="train")
+        for i in range(len(corpus_ds)):
+            corpus_id = corpus_ds[i]['corpus-id']
+            image = corpus_ds[i]['image'].convert('RGB')
+            content[corpus_id] = image
 
     #加载模型
     if (task_type == 'weighted_selection'):
@@ -257,9 +258,7 @@ def main():
                     continue
                     
         else:
-            image_data = [content[docid_item] for docid_item in docid]
-            image_data = [BytesIO(image_data_item) for image_data_item in image_data]
-            image_list = [Image.open(image_data_item).convert('RGB') for image_data_item in image_data]
+            image_list = [content[docid_item] for docid_item in docid]
             
             if (task_type == 'page_concatenation'):
                 if (concatenate_type not in ['horizontal', 'vertical']):
