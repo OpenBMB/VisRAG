@@ -25,8 +25,8 @@ def images_to_base64_list(image_list):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name', type=str, required=True) # option: MiniCPM, MiniCPMV2.0, MiniCPMV2.6, gpt4o
-    parser.add_argument('--dataset_name', type=str, required=True)
+    parser.add_argument('--model_name', type=str, required=True, choices=['MiniCPM', 'MiniCPMV2.0', 'MiniCPMV2.6', 'gpt4o'])
+    parser.add_argument('--dataset_name', type=str, choices=['ArxivQA', 'ChartQA', 'PlotQA', 'MP-DocVQA', 'SlideVQA', 'InfoVQA'], required=True)
     parser.add_argument('--rank', type=int, required=True)
     parser.add_argument('--world_size', type=int, required=True)
 
@@ -34,8 +34,8 @@ def parse_args():
     parser.add_argument('--topk', type=int)
     parser.add_argument('--results_root_dir', type=str)
     
-    parser.add_argument('--task_type', type=str, required=True) # option: text, page_concatenation, weighted_selection, multi_image
-    parser.add_argument('--concatenate_type', type=str) # option: horizontal, vertical
+    parser.add_argument('--task_type', type=str, required=True, choices=['text', 'page_concatenation', 'weighted_selection', 'multi_image'])
+    parser.add_argument('--concatenate_type', type=str, choices=['horizontal', 'vertical'])
     parser.add_argument('--ocr_type', type=str)
     args = parser.parse_args()
     return args
