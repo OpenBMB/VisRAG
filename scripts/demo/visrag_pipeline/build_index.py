@@ -61,7 +61,7 @@ model_path = 'openbmb/VisRAG-Ret'
 device = 'cuda'
 
 while(True):
-    knowledge_base_path = input("Enter the knowledge base path: ")
+    knowledge_base_path = input("Please enter the knowledge base path in which we build the index: ")
     if os.path.isabs(knowledge_base_path):
         break
     else:
