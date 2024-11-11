@@ -9,6 +9,7 @@ numpy==1.26.4
 openai
 Pillow==10.1.0
 protobuf==4.25.0
+PyMuPDF
 pytrec_eval==0.5
 sentencepiece==0.1.99
 torch==2.1.2
