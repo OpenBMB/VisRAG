@@ -486,7 +486,7 @@ def main():
             print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
         elif (dataset_name == 'InfoVQA'):
             print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
-        QA
+            
         history_datas.append(json.dumps(history_data))
                 
     output_dir = None # Write your output path here
