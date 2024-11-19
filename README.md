@@ -103,12 +103,10 @@ python scripts/generate/generate.py \
 --results_root_dir <retrieval_results_dir> \
 --task_type <task_type> \
 --concatenate_type <image_concatenate_type> \
---ocr_type <ocr_type> \
 ```
 Note:
 1. `use_positive_sample` indicates whether to use retrieved documents or just the positive document for the query. `topk` and `results_root_dir` are only needed when `use_positive_sample` is set to 0. The `results_root_dir` should be organized as follows: `results_root_dir/dataset_name/*.trec`.
 2. `concatenate_type` is needed only when `task_type` is set to `page_concatenation`. It specifies the type of concatenation used to combine several images.
-3. `ocr_type` is required only when `task_type` is set to `text`. It indicates the type of OCR tool used to obtain the OCR results from an image.
 
 # 🔧 Usage
 
