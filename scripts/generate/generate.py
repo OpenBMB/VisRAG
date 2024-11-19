@@ -51,6 +51,11 @@ def main():
     rank = args.rank
     world_size = args.world_size
     use_positive_sample = True if args.use_positive_sample else False
+
+    output_dir = None # Write your output path here
+    if (output_dir == None):
+        raise Exception("output_dir is None! Please write your output path.")
+    
     if (not use_positive_sample):
         if (args.topk == None):
             raise Exception("topk is None!")
@@ -110,18 +115,25 @@ def main():
             from openmatch.modeling.weighted_selection.MiniCPMV20.modeling_minicpmv import MiniCPMV as ModelForCausalLM_class
     else:
         if (model_name == 'gpt4o'):
-            client = OpenAI(api_key=None) # Write your OpenAI API key here
+            api_key = None # Write your OpenAI API key here
+            if (api_key == None):
+                raise Exception("api_key is None! Please write your OpenAI API key.")
+            client = OpenAI(api_key=api_key)
         else:
             from transformers import AutoModel as Model_class
             from transformers import AutoModelForCausalLM as ModelForCausalLM_class
         
     if (model_name == 'MiniCPM'):
         model_name_or_path = None # Write your model path here
+        if (model_name_or_path == None):
+            raise Exception("model_name_or_path is None! Please write your model path.")
         tokenizer = Tokenizer_class.from_pretrained(model_name_or_path)
         model = ModelForCausalLM_class.from_pretrained(model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
 
     elif (model_name == 'MiniCPMV2.0'):
         model_name_or_path = None # Write your model path here
+        if (model_name_or_path == None):
+            raise Exception("model_name_or_path is None! Please write your model path.")
         tokenizer = Tokenizer_class.from_pretrained(model_name_or_path, trust_remote_code=True)
         model = ModelForCausalLM_class.from_pretrained(model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
         model = model.to(device='cuda', dtype=torch.bfloat16)
@@ -129,6 +141,8 @@ def main():
 
     elif (model_name == 'MiniCPMV2.6'):
         model_name_or_path = None # Write your model path here
+        if (model_name_or_path == None):
+            raise Exception("model_name_or_path is None! Please write your model path.")
         model = Model_class.from_pretrained(model_name_or_path, trust_remote_code=True,
             attn_implementation='sdpa', torch_dtype=torch.bfloat16)
         model = model.eval().cuda()
@@ -488,11 +502,8 @@ def main():
         print('---------------')
             
         history_datas.append(json.dumps(history_data))
-                
-    output_dir = None # Write your output path here
-    if (output_dir == None):
-        raise Exception("output_dir is None! Please write your output path.")
-
+    
+    # write to file
     prefix = model_name
     output_dir = os.path.join(output_dir, prefix)
     prefix += '_'
