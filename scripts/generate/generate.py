@@ -159,6 +159,9 @@ def main():
                 docid = docid.split('tcy6')
             else:
                 docid = [qid[:-1 - len(qid.split('-')[-1])]]
+
+            if (task_type == 'weighted_selection'):
+                doc_scores = len(docid) * [1/len(docid)]
         else:
             # get top-k docid
             docid = []
