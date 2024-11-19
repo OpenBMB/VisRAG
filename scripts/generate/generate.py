@@ -363,7 +363,7 @@ def main():
                         continue
             elif (task_type == 'weighted_selection'):
                 if (model_name == 'MiniCPMV2.0'):
-                    responds = model.replug_chat(
+                    responds = model.weighted_selection(
                     image_list=image_list,
                     msgs=input,
                     doc_scores=doc_scores,
