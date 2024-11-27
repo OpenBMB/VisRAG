@@ -148,9 +148,9 @@ def process_response(response_json, sample_json, data_path):
                 file.write(json.dumps(json_object, ensure_ascii=False) + '\n')
             print("saved parsed response for reading.")
 
-def list_txt_files(directory):
-    txt_files = [f for f in os.listdir(directory) if f.endswith('.txt')]
-    return txt_files
+def list_json_files(directory):
+    json_files = [f for f in os.listdir(directory) if f.endswith('.json')]
+    return json_files
 
 def find_additional_elements(a, b):
     a_set = set(a)
@@ -159,8 +159,8 @@ def find_additional_elements(a, b):
     return unique_elements
 
 def main(): 
-    input_data_paths = list_txt_files(input_dir)
-    finished_data_paths = list_txt_files(output_dir)
+    input_data_paths = list_json_files(input_dir)
+    finished_data_paths = list_json_files(output_dir)
     todos = find_additional_elements(input_data_paths, finished_data_paths)
     
     print(f"todos = {todos}")
