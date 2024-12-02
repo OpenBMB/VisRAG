@@ -70,8 +70,8 @@ bash scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspe
 Note:
 1. Our training data can be found in the `VisRAG` collection on Hugging Face, referenced at the beginning of this page. Please note that we have separated the `In-domain-data` and `Synthetic-data` due to their distinct differences. If you wish to train with the complete dataset, you’ll need to merge and shuffle them manually.
 2. The parameters listed above are those used in our paper and can be used to reproduce the results.
-3. The training script is configured to use datasets from Hugging Face by default. If you prefer to train using locally downloaded dataset repositories, you can modify the `DATASET_PATH` variable in the evaluation script to point to the local repository directory.
-4. `<repo_name_or_path>` can be `openbmb/VisRAG-Ret-Train-In-domain-data`, `openbmb/VisRAG-Ret-Train-Synthetic-data` or the directory path of a repository downloaded from Hugging Face.
+3. `<repo_name_or_path>` can be any of the following: `openbmb/VisRAG-Ret-Train-In-domain-data`, `openbmb/VisRAG-Ret-Train-Synthetic-data`, the directory path of a repository downloaded from `Hugging Face`, or the directory containing your own training data.
+4. If you wish to train using your own datasets, remove the `--from_hf_repo` line from the `train.sh` script. Additionally, ensure that your dataset directory contains a `metadata.json` file, which must include a `length` field specifying the total number of samples in the dataset.
 5. Our training framework is modified based on [OpenMatch](https://github.com/OpenMatch/OpenMatch).
 
 ## VisRAG-Gen
