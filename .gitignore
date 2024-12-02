@@ -166,3 +166,8 @@ cython_debug/
 
 # Knowledge Base
 kb/
+
+/build
+/checkpoints
+/wandb
+/tensorboard

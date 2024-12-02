@@ -1,3 +1,7 @@
+# For deepspeed
+export PATH=/usr/local/cuda/bin:$PATH
+
+
 # on each node, the script will only run once.
 MAX_SEQ_LEN=$1
 PER_DEV_BATCH_SIZE=$2
@@ -25,8 +29,8 @@ MASTER_PORT=23456
 
 TIMESTR=$(date "+%Y-%m-%d-%H%M%S")
 IDENTITY="train-$TIMESTR-model-data-lr-$LR-softm_temp-$SOFTMAX_TEMPERATURE-bsz$PER_DEV_BATCH_SIZE-ngpus$GPUS_PER_NODE-nnodes$WORLD_SIZE-inbatch-$IN_BATCH-nepoch-$EPOCH-pooling-$POOLING-attention-$ATTENTION-qinstruct-$QUERY_INSTRUCTION-cinstruct-$CORPUS_INSTRUCTION-gradcache-$GRADCACHE-passage-stopgrad-$PASSAGE_STOP_GRAD-npassage-$NPASSAGE"
-CHECKPOINT_DIR=/data/checkpoints
-LOG_DIR=/data/tensorboard
+CHECKPOINT_DIR=./checkpoints
+LOG_DIR=./tensorboard
 IN_BATCH=true
 LORA=false
 LORA_R=32
