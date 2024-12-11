@@ -69,7 +69,8 @@ while(True):
 
 print("VisRAG-Ret load begin...")
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
-model = AutoModel.from_pretrained(model_path, trust_remote_code=True)
+model = AutoModel.from_pretrained(model_path, trust_remote_code=True,
+    attn_implementation='sdpa', torch_dtype=torch.bfloat16)
 model.eval()
 model.to(device)
 print("VisRAG-Ret load success!")
