@@ -391,7 +391,7 @@ class MiniCPMV(MiniCPMVPreTrainedModel):
 
         return answer, sequences_scores
     
-    def replug_chat(self,
+    def weighted_selection(self,
         image_list,
         msgs,
         doc_scores,

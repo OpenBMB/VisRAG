@@ -10,7 +10,6 @@ from io import BytesIO
 from transformers import AutoTokenizer as Tokenizer_class
 from openmatch.generation_utils import get_flatten_table, preprocess_text, is_numeric_data, is_within_5_percent, horizontal_concat, vertical_concat
 from openai import OpenAI
-import pandas as pd
 from datasets import load_dataset
 
 def images_to_base64_list(image_list):
@@ -36,7 +35,6 @@ def parse_args():
     
     parser.add_argument('--task_type', type=str, required=True, choices=['text', 'page_concatenation', 'weighted_selection', 'multi_image'])
     parser.add_argument('--concatenate_type', type=str, choices=['horizontal', 'vertical'])
-    parser.add_argument('--ocr_type', type=str)
     args = parser.parse_args()
     return args
 
@@ -53,6 +51,11 @@ def main():
     rank = args.rank
     world_size = args.world_size
     use_positive_sample = True if args.use_positive_sample else False
+
+    output_dir = None # Write your output path here
+    if (output_dir == None):
+        raise Exception("output_dir is None! Please write your output path.")
+    
     if (not use_positive_sample):
         if (args.topk == None):
             raise Exception("topk is None!")
@@ -62,7 +65,7 @@ def main():
         results_root_dir = args.results_root_dir
         results_dir = os.path.join(results_root_dir, dataset_name)
 
-        # load trec results
+        # Load trec files which is generated after retrieval evaluation
         partitions = glob.glob(os.path.join(results_dir, "test.*.trec"))
         run = {}
         for part in partitions:
@@ -74,34 +77,37 @@ def main():
         if (args.concatenate_type == None):
             raise Exception("concatenate_type is None!")
         concatenate_type = args.concatenate_type
-    elif (task_type == 'text'):
-        if (args.ocr_type == None):
-            raise Exception("ocr_type is None!")
-        ocr_type = args.ocr_type
     
-    input_dir = None # Write your input path here
+    # Load corpus
+    corpus = {} # Build a dict that maps docid to OCR results or image
     if (task_type == 'text'):
-        input_dir = os.path.join(input_dir, 'ocr', f'ocr_{ocr_type}', dataset_name)
+        """
+        Please write the logic for reading OCR results and building a dict that maps docid to OCR results yourself,
+        as different people might have different ways of organizing those results.
+        """
+        raise Exception("Please write the logic yourself.")
     else:
-        input_dir = os.path.join(input_dir, 'image', dataset_name)
-
-    query_path = os.path.join(input_dir, f'{dataset_name}-eval-queries.parquet')
-    corpus_path = os.path.join(input_dir, f'{dataset_name}-eval-corpus.parquet')
-        
-    # build docid->content
-    content = {}
-    if (task_type == 'text'):
-        corpus_ds = load_dataset(f"openbmb/VisRAG-Ret-Test-{dataset_name}", name="corpus", split="train")
-        for i in range(len(corpus_ds)):
-            corpus_id = corpus_ds[i]['corpus-id']
-            text = corpus_ds[i]['text']
-            content[corpus_id] = text
-    else:
-        corpus_ds = load_dataset(f"openbmb/VisRAG-Ret-Test-{dataset_name}", name="corpus", split="train")
+        """
+        Please write either a HF dataset name or a path to the dataset here.
+        For example,
+        dataset_name_or_path = 'openbmb/VisRAG-Ret-Test-ArxivQA'
+        dataset_name_or_path = '/path/to/VisRAG-Ret-Test-ArxivQA'
+        """
+        dataset_name_or_path = f"openbmb/VisRAG-Ret-Test-{dataset_name}"
+        corpus_ds = load_dataset(dataset_name_or_path, name="corpus", split="train")
+        print(f"We defaultly load the dataset (corpus) from HF, if you want to load the dataset from local, please modify the dataset_name_or_path in the script.")
         for i in range(len(corpus_ds)):
             corpus_id = corpus_ds[i]['corpus-id']
             image = corpus_ds[i]['image'].convert('RGB')
-            content[corpus_id] = image
+            corpus[corpus_id] = image  
+
+    # Load queries
+    dataset_name_or_path = f"openbmb/VisRAG-Ret-Test-{dataset_name}"
+    queries = load_dataset(dataset_name_or_path, name="queries", split="train")
+    print(f"We defaultly load the dataset (queries) from HF, if you want to load the dataset from local, please modify the dataset_name_or_path in the script.")
+
+
+
 
     #加载模型
     if (task_type == 'weighted_selection'):
@@ -109,18 +115,25 @@ def main():
             from openmatch.modeling.weighted_selection.MiniCPMV20.modeling_minicpmv import MiniCPMV as ModelForCausalLM_class
     else:
         if (model_name == 'gpt4o'):
-            client = OpenAI(api_key=None) # Write your OpenAI API key here
+            api_key = None # Write your OpenAI API key here
+            if (api_key == None):
+                raise Exception("api_key is None! Please write your OpenAI API key.")
+            client = OpenAI(api_key=api_key)
         else:
             from transformers import AutoModel as Model_class
             from transformers import AutoModelForCausalLM as ModelForCausalLM_class
         
     if (model_name == 'MiniCPM'):
         model_name_or_path = None # Write your model path here
+        if (model_name_or_path == None):
+            raise Exception("model_name_or_path is None! Please write your model path.")
         tokenizer = Tokenizer_class.from_pretrained(model_name_or_path)
         model = ModelForCausalLM_class.from_pretrained(model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
 
     elif (model_name == 'MiniCPMV2.0'):
         model_name_or_path = None # Write your model path here
+        if (model_name_or_path == None):
+            raise Exception("model_name_or_path is None! Please write your model path.")
         tokenizer = Tokenizer_class.from_pretrained(model_name_or_path, trust_remote_code=True)
         model = ModelForCausalLM_class.from_pretrained(model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
         model = model.to(device='cuda', dtype=torch.bfloat16)
@@ -128,6 +141,8 @@ def main():
 
     elif (model_name == 'MiniCPMV2.6'):
         model_name_or_path = None # Write your model path here
+        if (model_name_or_path == None):
+            raise Exception("model_name_or_path is None! Please write your model path.")
         model = Model_class.from_pretrained(model_name_or_path, trust_remote_code=True,
             attn_implementation='sdpa', torch_dtype=torch.bfloat16)
         model = model.eval().cuda()
@@ -139,26 +154,28 @@ def main():
     history_datas = []
     correct = 0
     total_num = 0
-    query_df = pd.read_parquet(query_path)
-    for cnt, row in query_df.iterrows():
+    for cnt, example in enumerate(queries):
         if (cnt % world_size != rank):
             continue
         history_data = {}
-        query = row['query']
+        query = example['query']
         history_data['query'] = query
-        qid = row['query-id']
+        qid = example['query-id']
         history_data['qid'] = qid
-        answer = row['answer']
+        answer = example['answer']
         history_data['original_answer'] = answer
         if (answer == None):
-            raise Exception
+            raise Exception("answer is None!")
         if (use_positive_sample):
             if (dataset_name == 'SlideVQA'):
-                # due to the special format of SlideVQA, we need to split the qid to get the docid
+                # due to the special format of SlideVQA, we need to split the qid to get the ground truth docid
                 docid = qid.split('query_number')[0]
                 docid = docid.split('tcy6')
             else:
                 docid = [qid[:-1 - len(qid.split('-')[-1])]]
+
+            if (task_type == 'weighted_selection'):
+                doc_scores = len(docid) * [1/len(docid)]
         else:
             # get top-k docid
             docid = []
@@ -176,17 +193,18 @@ def main():
         history_data['docid'] = docid
         if (task_type == 'text'):
             if (dataset_name == 'ChartQA'):
-                # get table 
                 table_dir = None # Write your table path here
-                csv_file_path = [os.path.join(table_dir, f"{docid_item.split('.')[0]}.csv") for docid_item in docid]
+                if (table_dir == None):
+                    raise Exception("""table_dir is None! Please download the table data from https://huggingface.co/datasets/ahmed-masry/ChartQA/tree/main""")
+                csv_file_path = [os.path.join(table_dir, f"{docid_item.split('.')[0]}.csv") for docid_item in docid] # get table 
                 doc_list = [get_flatten_table(csv_file_path_item) for csv_file_path_item in csv_file_path]
                 doc = '\n'.join(doc_list)
                 input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
             elif (dataset_name == 'ArxivQA'):
                 prompt = ''
-                doc_list = [content[docid_item] for docid_item in docid]
+                doc_list = [corpus[docid_item] for docid_item in docid]
                 doc = '\n'.join(doc_list)
-                options = row['options']
+                options = example['options']
                 options_prompt = 'Options:\n'
                 # if A, B, C, D is not at the beginning
                 flag = 0
@@ -206,19 +224,19 @@ def main():
                 prompt += '''Answer directly with the letter of the correct option as the first character.'''
                 input = prompt
             elif (dataset_name == 'PlotQA'):
-                doc_list = [content[docid_item] for docid_item in docid]
+                doc_list = [corpus[docid_item] for docid_item in docid]
                 doc = '\n'.join(doc_list)
                 input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
             elif (dataset_name == 'MP-DocVQA'):
-                doc_list = [content[docid_item] for docid_item in docid]
+                doc_list = [corpus[docid_item] for docid_item in docid]
                 doc = '\n'.join(doc_list)
                 input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
             elif (dataset_name == 'SlideVQA'):
-                doc_list = [content[docid_item] for docid_item in docid]
+                doc_list = [corpus[docid_item] for docid_item in docid]
                 doc = '\n'.join(doc_list)
                 input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
             elif (dataset_name == 'InfoVQA'):
-                doc_list = [content[docid_item] for docid_item in docid]
+                doc_list = [corpus[docid_item] for docid_item in docid]
                 doc = '\n'.join(doc_list)
                 input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
             
@@ -258,7 +276,7 @@ def main():
                     continue
                     
         else:
-            image_list = [content[docid_item] for docid_item in docid]
+            image_list = [corpus[docid_item] for docid_item in docid]
             
             if (task_type == 'page_concatenation'):
                 if (concatenate_type not in ['horizontal', 'vertical']):
@@ -272,7 +290,7 @@ def main():
                 input = [{'role': 'user', 'content': f"Answer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"}]
             elif (dataset_name == 'ArxivQA'):
                 prompt = ''
-                options = row['options']
+                options = example['options']
                 options_prompt = 'Options:\n'
                 # if A, B, C, D is not at the beginning
                 flag = 0
@@ -360,7 +378,7 @@ def main():
                         continue
             elif (task_type == 'weighted_selection'):
                 if (model_name == 'MiniCPMV2.0'):
-                    responds = model.replug_chat(
+                    responds = model.weighted_selection(
                     image_list=image_list,
                     msgs=input,
                     doc_scores=doc_scores,
@@ -385,7 +403,6 @@ def main():
             print(f"query: {query}")
             print(f"responds:{responds}")
             print(f"answer:{answer}")
-            print('---------------')
             if (responds == answer):
                 correct += 1
             elif(is_numeric_data(responds) and is_numeric_data(answer) and answer != '0' and is_within_5_percent(responds, answer)):
@@ -396,7 +413,6 @@ def main():
             print(f"query: {query}")
             print(f"responds:{responds}")
             print(f"answer:{answer}")
-            print('---------------')
             if (responds == answer):
                 correct += 1
         elif (dataset_name == 'PlotQA'):
@@ -413,7 +429,6 @@ def main():
             print(f"query: {query}")
             print(f"responds:{responds}")
             print(f"answer:{answer}")
-            print('---------------')
             if (responds == answer):
                 correct += 1
             elif(is_numeric_data(responds) and (not is_str) and float(answer) != 0.0 and is_within_5_percent(responds, answer)):
@@ -431,7 +446,6 @@ def main():
             print(f"query: {query}")
             print(f"responds:{responds}")
             print(f"answer:{answer}")
-            print('---------------')
             for answer_item in answer:
                 if (responds == answer_item):
                     correct += 1
@@ -446,7 +460,6 @@ def main():
             print(f"query: {query}")
             print(f"responds:{responds}")
             print(f"answer:{answer}")
-            print('---------------')
             if (responds == answer):
                 correct += 1
         elif (dataset_name == 'InfoVQA'):
@@ -462,7 +475,6 @@ def main():
             print(f"query: {query}")
             print(f"responds:{responds}")
             print(f"answer:{answer}")
-            print('---------------')
             for answer_item in answer:
                 if (responds == answer_item):
                     correct += 1
@@ -486,11 +498,12 @@ def main():
             print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
         elif (dataset_name == 'InfoVQA'):
             print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
-        QA
-        history_datas.append(json.dumps(history_data))
-                
-    output_dir = None # Write your output path here
 
+        print('---------------')
+            
+        history_datas.append(json.dumps(history_data))
+    
+    # write to file
     prefix = model_name
     output_dir = os.path.join(output_dir, prefix)
     prefix += '_'
@@ -534,5 +547,4 @@ def main():
     
     
 if __name__ == '__main__':
-
     main()
