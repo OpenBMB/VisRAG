@@ -489,7 +489,12 @@ def main():
             
         history_datas.append(json.dumps(history_data))
     
-    # write to file
+    prefix, output_dir = make_prefix_output_dir(model_name, args.use_positive_sample, results_root_dir, dataset_name, task_type, topk)
+    write_results(output_dir, prefix, correct, total_num)   
+    write_history(output_dir, prefix, history_datas)
+
+
+def make_prefix_output_dir(model_name, use_positive_sample, results_root_dir, dataset_name, task_type, topk):
     prefix = model_name
     output_dir = os.path.join(output_dir, prefix)
     prefix += '_'
@@ -504,21 +509,24 @@ def main():
         prefix = f"{prefix}_{dataset_name}_oracle"
     else:
         prefix = f"{prefix}_{dataset_name}_{task_type}_top{topk}"
-
     os.makedirs(output_dir, exist_ok=True)
+
+
+def write_results(output_dir, prefix, correct, total_num):
     result_path = os.path.join(output_dir, f"{prefix}_result.jsonl")
     print(f"writing to {result_path}")
     with open(result_path, 'w') as file:
         acc = float(correct) / total_num
         data = {'Accuracy':acc}
         file.write(json.dumps(data)+'\n')
-        
+
+
+def write_history(output_dir, prefix, history_datas):
     history_path = os.path.join(output_dir, f"{prefix}_history.jsonl")
     print(f"writing to {history_path}")
     with open(history_path, 'w') as file:
         for history_data in history_datas:
             file.write(history_data + '\n')
-   
     
     
 if __name__ == '__main__':
