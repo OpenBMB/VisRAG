@@ -253,6 +253,7 @@ class DRModel(nn.Module):
         else:
             name = config_json["model_name_or_path"]
 
+
         # ------------- config and model --------------
         if "siglip" in name or "SigLIP" in name:
             logging.info("using SIGLIP model, load modeling from openmatch.modeling.modeling_siglip")
