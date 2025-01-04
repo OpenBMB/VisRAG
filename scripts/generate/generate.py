@@ -277,11 +277,9 @@ def main():
             image_list = [corpus[docid_item] for docid_item in docid]
             
             if (task_type == 'page_concatenation'):
-                if (concatenate_type not in ['horizontal', 'vertical']):
-                    raise Exception("concatenate_type error!")
-                elif (concatenate_type == 'horizontal'):
+                if (args.concatenate_type == 'horizontal'):
                     image_list = [horizontal_concat(image_list)]
-                elif (concatenate_type == 'vertical'):
+                elif (args.concatenate_type == 'vertical'):
                     image_list = [vertical_concat(image_list)]
                 
             if (dataset_name == 'ChartQA'):
