@@ -12,6 +12,7 @@ from openmatch.generation_utils import get_flatten_table, preprocess_text, is_nu
 from openai import OpenAI
 from datasets import load_dataset
 
+
 def images_to_base64_list(image_list):
     base64_list = []
     for img in image_list:
@@ -21,6 +22,7 @@ def images_to_base64_list(image_list):
         img_base64 = base64.b64encode(img_bytes).decode('utf-8')
         base64_list.append(img_base64)
     return base64_list
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -39,6 +41,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+
 def main():
     args = parse_args()
     check_args(args)
@@ -55,11 +58,6 @@ def main():
         run = get_run(args, dataset_name)
         
     task_type = args.task_type
-    if (task_type == 'page_concatenation'):
-        if (args.concatenate_type == None):
-            raise Exception("concatenate_type is None!")
-        concatenate_type = args.concatenate_type
-    
     # Load corpus
     corpus = {} # Build a dict that maps docid to OCR results or image
     if (task_type == 'text'):
@@ -87,8 +85,6 @@ def main():
     dataset_name_or_path = f"openbmb/VisRAG-Ret-Test-{dataset_name}"
     queries = load_dataset(dataset_name_or_path, name="queries", split="train")
     print(f"We defaultly load the dataset (queries) from HF, if you want to load the dataset from local, please modify the dataset_name_or_path in the script.")
-
-
 
 
     #加载模型
@@ -464,7 +460,7 @@ def main():
         history_data['preprocessed_answer'] = answer
         history_data['original_responds'] = responds_backup
         
-        
+
         # calculate accuracy
         print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
         print('---------------')
