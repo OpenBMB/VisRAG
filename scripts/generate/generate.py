@@ -48,8 +48,6 @@ def main():
     else:
         max_new_tokens = 20
 
-    rank = args.rank
-    world_size = args.world_size
     use_positive_sample = True if args.use_positive_sample else False
 
     output_dir = None # Write your output path here
@@ -149,13 +147,13 @@ def main():
         tokenizer = Tokenizer_class.from_pretrained(model_name_or_path, trust_remote_code=True)
 
     if (model_name != 'gpt4o'):
-        model.to(rank)
+        model.to(args.rank)
     
     history_datas = []
     correct = 0
     total_num = 0
     for cnt, example in enumerate(queries):
-        if (cnt % world_size != rank):
+        if (cnt % args.world_size != args.rank):
             continue
         history_data = {}
         query = example['query']
