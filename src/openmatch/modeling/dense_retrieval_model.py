@@ -245,14 +245,13 @@ class DRModel(nn.Module):
         # load local
         config = None
         head_q = head_p = None
-        #config_json = json.load(open(os.path.join(model_name_or_path, 'config.json')))
+        config_json = json.load(open(os.path.join(model_name_or_path, 'config.json')))
 
-        #assert "_name_or_path" in config_json or "model_name_or_path" in config_json, "building model will need to determine the modeling file, please make sure _name_or_path or model_name_or_path is in the config.json"
-        #if "_name_or_path" in config_json:
-        #    name = config_json["_name_or_path"]
-        #else:
-        #    name = config_json["model_name_or_path"]
-        name = "openbmb/MiniCPM-V-2"
+        assert "_name_or_path" in config_json or "model_name_or_path" in config_json, "building model will need to determine the modeling file, please make sure _name_or_path or model_name_or_path is in the config.json"
+        if "_name_or_path" in config_json:
+            name = config_json["_name_or_path"]
+        else:
+            name = config_json["model_name_or_path"]
 
         # ------------- config and model --------------
         if "siglip" in name or "SigLIP" in name:
