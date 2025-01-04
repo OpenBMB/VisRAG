@@ -48,7 +48,6 @@ def main():
     else:
         max_new_tokens = 20
 
-    use_positive_sample = True if args.use_positive_sample else False
 
     output_dir = None # Write your output path here
     if (output_dir == None):
@@ -59,7 +58,7 @@ def main():
             raise Exception("topk is None!")
         if (args.results_root_dir == None):
             raise Exception("results_root_dir is None!")
-        topk = args.topk
+        
         results_root_dir = args.results_root_dir
         results_dir = os.path.join(results_root_dir, dataset_name)
 
@@ -180,13 +179,13 @@ def main():
             doc_scores = []
             doc_cnt = 0
             for key, value in sorted(run[qid].items(), key=lambda item: item[1], reverse=True):
-                if (doc_cnt < topk):
+                if (doc_cnt < args.topk):
                     docid.append(key)
                     doc_scores.append(value)
                     doc_cnt += 1
                 else:
                     break
-            if (len(docid) < topk):
+            if (len(docid) < args.topk):
                 raise Exception("len(docid) < topk!")
         history_data['docid'] = docid
         if (task_type == 'text'):
