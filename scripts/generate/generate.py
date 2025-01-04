@@ -32,6 +32,7 @@ def parse_args():
     parser.add_argument('--use_positive_sample')
     parser.add_argument('--topk', type=int)
     parser.add_argument('--results_root_dir', type=str)
+    parser.add_argument('--output_dir', type=str)
     
     parser.add_argument('--task_type', type=str, required=True, choices=['text', 'page_concatenation', 'weighted_selection', 'multi_image'])
     parser.add_argument('--concatenate_type', type=str, choices=['horizontal', 'vertical'])
