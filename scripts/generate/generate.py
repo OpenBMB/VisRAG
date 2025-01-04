@@ -488,7 +488,7 @@ def main():
             
         history_datas.append(json.dumps(history_data))
     
-    prefix, output_dir = make_prefix_output_dir(model_name, args.use_positive_sample, results_root_dir, dataset_name, task_type, topk)
+    prefix, output_dir = make_prefix_output_dir(model_name, args.use_positive_sample, results_root_dir, dataset_name, task_type, args.topk)
     write_results(output_dir, prefix, correct, total_num)   
     write_history(output_dir, prefix, history_datas)
 
