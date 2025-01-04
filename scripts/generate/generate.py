@@ -41,18 +41,15 @@ def parse_args():
 
 def main():
     args = parse_args()
-    model_name = args.model_name
+    check_args(args)
 
+    model_name = args.model_name
     dataset_name = args.dataset_name
+
     if (dataset_name == 'ArxivQA'):
         max_new_tokens = 2
     else:
         max_new_tokens = 20
-
-
-    output_dir = None # Write your output path here
-    if (output_dir == None):
-        raise Exception("output_dir is None! Please write your output path.")
     
     if (not args.use_positive_sample):
         run = get_run(args, dataset_name)
@@ -532,7 +529,15 @@ def get_run(args, dataset_name):
     return run
 
 
+def check_args(args):
+    if args.output_dir == None:
+        raise Exception("output_dir is None! Please write your output path.")
+    if args.task_type == 'page_concatenation':
+        if args.concatenate_type == None:
+            raise Exception("concatenate_type is None!")
+        if (args.concatenate_type not in ['horizontal', 'vertical']):
+                raise Exception("concatenate_type error!")
     
-    
+
 if __name__ == '__main__':
     main()
