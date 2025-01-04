@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--rank', type=int, required=True)
     parser.add_argument('--world_size', type=int, required=True)
 
-    parser.add_argument('--use_positive_sample', type=int, required=True)
+    parser.add_argument('--use_positive_sample')
     parser.add_argument('--topk', type=int)
     parser.add_argument('--results_root_dir', type=str)
     
@@ -54,7 +54,7 @@ def main():
     if (output_dir == None):
         raise Exception("output_dir is None! Please write your output path.")
     
-    if (not use_positive_sample):
+    if (not args.use_positive_sample):
         if (args.topk == None):
             raise Exception("topk is None!")
         if (args.results_root_dir == None):
@@ -164,7 +164,7 @@ def main():
         history_data['original_answer'] = answer
         if (answer == None):
             raise Exception("answer is None!")
-        if (use_positive_sample):
+        if (args.use_positive_sample):
             if (dataset_name == 'SlideVQA'):
                 # due to the special format of SlideVQA, we need to split the qid to get the ground truth docid
                 docid = qid.split('query_number')[0]
