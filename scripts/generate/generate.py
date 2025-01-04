@@ -38,6 +38,7 @@ def parse_args():
     
     parser.add_argument('--task_type', type=str, required=True, choices=['text', 'page_concatenation', 'weighted_selection', 'multi_image'])
     parser.add_argument('--concatenate_type', type=str, choices=['horizontal', 'vertical'])
+    parser.add_argument('--openai_api_key', type=str, help='api key for open_ai, required only if --model_name == gpt4o')
     args = parser.parse_args()
     return args
 
@@ -93,10 +94,7 @@ def main():
             from openmatch.modeling.weighted_selection.MiniCPMV20.modeling_minicpmv import MiniCPMV as ModelForCausalLM_class
     else:
         if (model_name == 'gpt4o'):
-            api_key = None # Write your OpenAI API key here
-            if (api_key == None):
-                raise Exception("api_key is None! Please write your OpenAI API key.")
-            client = OpenAI(api_key=api_key)
+            client = OpenAI(api_key=args.openai_api_key)
         else:
             from transformers import AutoModel as Model_class
             from transformers import AutoModelForCausalLM as ModelForCausalLM_class
@@ -533,7 +531,9 @@ def check_args(args):
             raise Exception("concatenate_type is None!")
         if (args.concatenate_type not in ['horizontal', 'vertical']):
                 raise Exception("concatenate_type error!")
-    
+    if (args.model_name == 'gpt4o'):
+        if (args.openai_api_key == None):
+            raise Exception("Model is gpt4o but openai_api_key is None! Please write your OpenAI API key in openai_api_key argument.")
 
 if __name__ == '__main__':
     main()
