@@ -484,19 +484,7 @@ def main():
         
         
         # calculate accuracy
-        if (dataset_name == 'ChartQA'):     
-            print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
-        elif (dataset_name == 'ArxivQA'):
-            print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
-        elif (dataset_name == 'PlotQA'):
-            print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
-        elif (dataset_name == 'MP-DocVQA'):
-            print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
-        elif (dataset_name == "SlideVQA"):
-            print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
-        elif (dataset_name == 'InfoVQA'):
-            print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
-
+        print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
         print('---------------')
             
         history_datas.append(json.dumps(history_data))
