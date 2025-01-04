@@ -489,27 +489,27 @@ def main():
             
         history_datas.append(json.dumps(history_data))
     
-    prefix, output_dir = make_prefix_output_dir(model_name, args.use_positive_sample, results_root_dir, dataset_name, task_type, args.topk)
-    write_results(output_dir, prefix, correct, total_num)   
-    write_history(output_dir, prefix, history_datas)
+    prefix, results_output_dir = make_prefix_output_dir(args.output_dir, model_name, args.use_positive_sample, args.results_root_dir, dataset_name, task_type, args.topk)
+    write_results(results_output_dir, prefix, correct, total_num)   
+    write_history(results_output_dir, prefix, history_datas)
 
 
-def make_prefix_output_dir(model_name, use_positive_sample, results_root_dir, dataset_name, task_type, topk):
+def make_prefix_output_dir(output_dir, model_name, use_positive_sample, results_root_dir, dataset_name, task_type, topk):
     prefix = model_name
-    output_dir = os.path.join(output_dir, prefix)
+    results_output_dir = os.path.join(output_dir, prefix)
     prefix += '_'
     if (use_positive_sample):
-        output_dir = os.path.join(output_dir, 'upper_bound')
+        results_output_dir = os.path.join(output_dir, 'upper_bound')
         prefix += 'upper_bound'
     else:
-        output_dir = os.path.join(output_dir, os.path.basename(results_root_dir))
+        results_output_dir = os.path.join(output_dir, os.path.basename(results_root_dir))
         prefix += str(os.path.basename(results_root_dir))
 
     if (use_positive_sample):
         prefix = f"{prefix}_{dataset_name}_oracle"
     else:
         prefix = f"{prefix}_{dataset_name}_{task_type}_top{topk}"
-    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(results_output_dir, exist_ok=True)
 
 
 def write_results(output_dir, prefix, correct, total_num):
