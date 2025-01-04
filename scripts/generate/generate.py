@@ -524,18 +524,7 @@ def main():
     print(f"writing to {result_path}")
     with open(result_path, 'w') as file:
         acc = float(correct) / total_num
-        if (dataset_name == 'ArxivQA'):
-            data = {'Accuracy':acc}
-        elif (dataset_name == 'PlotQA'):
-            data = {'Accuracy':acc}
-        elif (dataset_name == 'ChartQA'):
-            data = {'Accuracy':acc}
-        elif (dataset_name == 'SlideVQA'):
-            data = {'Accuracy':acc}
-        elif (dataset_name == 'MP-DocVQA'):
-            data = {'Accuracy':acc}
-        elif (dataset_name == 'InfoVQA'):
-            data = {'Accuracy':acc}
+        data = {'Accuracy':acc}
         file.write(json.dumps(data)+'\n')
         
     history_path = os.path.join(output_dir, f"{prefix}_history.jsonl")
