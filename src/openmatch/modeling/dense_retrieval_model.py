@@ -18,7 +18,7 @@ from transformers.modeling_outputs import ModelOutput
 from ..arguments import DataArguments
 from ..arguments import DRTrainingArguments as TrainingArguments
 from ..arguments import ModelArguments
-from src.openmatch.modeling.modeling_siglip.processing_siglip import SiglipProcessor
+from openmatch.modeling.modeling_siglip.processing_siglip import SiglipProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -245,24 +245,24 @@ class DRModel(nn.Module):
         # load local
         config = None
         head_q = head_p = None
-        config_json = json.load(open(os.path.join(model_name_or_path, 'config.json')))
+        #config_json = json.load(open(os.path.join(model_name_or_path, 'config.json')))
 
-        assert "_name_or_path" in config_json or "model_name_or_path" in config_json, "building model will need to determine the modeling file, please make sure _name_or_path or model_name_or_path is in the config.json"
-        if "_name_or_path" in config_json:
-            name = config_json["_name_or_path"]
-        else:
-            name = config_json["model_name_or_path"]
-
+        #assert "_name_or_path" in config_json or "model_name_or_path" in config_json, "building model will need to determine the modeling file, please make sure _name_or_path or model_name_or_path is in the config.json"
+        #if "_name_or_path" in config_json:
+        #    name = config_json["_name_or_path"]
+        #else:
+        #    name = config_json["model_name_or_path"]
+        name = "openbmb/MiniCPM-V-2"
 
         # ------------- config and model --------------
         if "siglip" in name or "SigLIP" in name:
             logging.info("using SIGLIP model, load modeling from openmatch.modeling.modeling_siglip")
-            from src.openmatch.modeling.modeling_siglip.configuration_siglip import SiglipConfig as config_cls
-            from src.openmatch.modeling.modeling_siglip.configuration_siglip import SiglipTextConfig, SiglipVisionConfig
-            from src.openmatch.modeling.modeling_siglip.modeling_siglip import SiglipModel as model_class
+            from openmatch.modeling.modeling_siglip.configuration_siglip import SiglipConfig as config_cls
+            from openmatch.modeling.modeling_siglip.configuration_siglip import SiglipTextConfig, SiglipVisionConfig
+            from openmatch.modeling.modeling_siglip.modeling_siglip import SiglipModel as model_class
         elif "MiniCPM-V-2" in name or "VisRAG" in name:
-            from src.openmatch.modeling.modeling_visrag_ret.modeling_visrag_ret import VisRAG_Ret as model_class
-            from src.openmatch.modeling.modeling_minicpmv.modeling_minicpmv import MiniCPMVConfig as config_cls
+            from openmatch.modeling.modeling_visrag_ret.modeling_visrag_ret import VisRAG_Ret as model_class
+            from openmatch.modeling.modeling_minicpmv.modeling_minicpmv import MiniCPMVConfig as config_cls
         else: # other model
             logging.info("using AutoModel model")
             config_cls = AutoConfig
