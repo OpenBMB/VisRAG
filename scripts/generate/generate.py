@@ -55,21 +55,8 @@ def main():
         raise Exception("output_dir is None! Please write your output path.")
     
     if (not args.use_positive_sample):
-        if (args.topk == None):
-            raise Exception("topk is None!")
-        if (args.results_root_dir == None):
-            raise Exception("results_root_dir is None!")
+        run = get_run(args, dataset_name)
         
-        results_root_dir = args.results_root_dir
-        results_dir = os.path.join(results_root_dir, dataset_name)
-
-        # Load trec files which is generated after retrieval evaluation
-        partitions = glob.glob(os.path.join(results_dir, "test.*.trec"))
-        run = {}
-        for part in partitions:
-            print("loading", part)
-            run.update(load_from_trec(part))
-    
     task_type = args.task_type
     if (task_type == 'page_concatenation'):
         if (args.concatenate_type == None):
@@ -525,6 +512,26 @@ def write_history(output_dir, prefix, history_datas):
     with open(history_path, 'w') as file:
         for history_data in history_datas:
             file.write(history_data + '\n')
+
+
+def get_run(args, dataset_name):
+    if (args.topk == None):
+        raise Exception("topk is None!")
+    if (args.results_root_dir == None):
+        raise Exception("results_root_dir is None!")
+    
+    results_dir = os.path.join(args.results_root_dir, dataset_name)
+
+    # Load trec files which is generated after retrieval evaluation
+    partitions = glob.glob(os.path.join(results_dir, "test.*.trec"))
+    run = {}
+    for part in partitions:
+        print("loading", part)
+        run.update(load_from_trec(part))
+    
+    return run
+
+
     
     
 if __name__ == '__main__':
