@@ -27,6 +27,7 @@ def images_to_base64_list(image_list):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', type=str, required=True, choices=['MiniCPM', 'MiniCPMV2.0', 'MiniCPMV2.6', 'gpt4o'])
+    parser.add_argument('--model_name_or_path', type=str, required=True)
     parser.add_argument('--dataset_name', type=str, choices=['ArxivQA', 'ChartQA', 'PlotQA', 'MP-DocVQA', 'SlideVQA', 'InfoVQA'], required=True)
     parser.add_argument('--rank', type=int, required=True)
     parser.add_argument('--world_size', type=int, required=True)
@@ -100,29 +101,20 @@ def main():
             from transformers import AutoModelForCausalLM as ModelForCausalLM_class
         
     if (model_name == 'MiniCPM'):
-        model_name_or_path = None # Write your model path here
-        if (model_name_or_path == None):
-            raise Exception("model_name_or_path is None! Please write your model path.")
-        tokenizer = Tokenizer_class.from_pretrained(model_name_or_path)
-        model = ModelForCausalLM_class.from_pretrained(model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
+        tokenizer = Tokenizer_class.from_pretrained(args.model_name_or_path)
+        model = ModelForCausalLM_class.from_pretrained(args.model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
 
     elif (model_name == 'MiniCPMV2.0'):
-        model_name_or_path = None # Write your model path here
-        if (model_name_or_path == None):
-            raise Exception("model_name_or_path is None! Please write your model path.")
-        tokenizer = Tokenizer_class.from_pretrained(model_name_or_path, trust_remote_code=True)
-        model = ModelForCausalLM_class.from_pretrained(model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
+        tokenizer = Tokenizer_class.from_pretrained(args.model_name_or_path, trust_remote_code=True)
+        model = ModelForCausalLM_class.from_pretrained(args.model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
         model = model.to(device='cuda', dtype=torch.bfloat16)
         model.eval()
 
     elif (model_name == 'MiniCPMV2.6'):
-        model_name_or_path = None # Write your model path here
-        if (model_name_or_path == None):
-            raise Exception("model_name_or_path is None! Please write your model path.")
-        model = Model_class.from_pretrained(model_name_or_path, trust_remote_code=True,
+        model = Model_class.from_pretrained(args.model_name_or_path, trust_remote_code=True,
             attn_implementation='sdpa', torch_dtype=torch.bfloat16)
         model = model.eval().cuda()
-        tokenizer = Tokenizer_class.from_pretrained(model_name_or_path, trust_remote_code=True)
+        tokenizer = Tokenizer_class.from_pretrained(args.model_name_or_path, trust_remote_code=True)
 
     if (model_name != 'gpt4o'):
         model.to(args.rank)
