@@ -134,100 +134,14 @@ def main():
             
         total_num += 1
         responds_backup = responds
-            
-        #pre-process
-        if (dataset_name == 'ChartQA'):
-            responds = preprocess_text(responds)
-            answer = preprocess_text(answer)
-            if ('%' in responds and '%' not in answer):
-                responds = responds.replace('%', '')
-            if ('%' not in responds and '%' in answer):
-                answer = answer.replace('%', '')
-            print(f"query: {query}")
-            print(f"responds:{responds}")
-            print(f"answer:{answer}")
-            if (responds == answer):
-                correct += 1
-            elif(is_numeric_data(responds) and is_numeric_data(answer) and answer != '0' and is_within_5_percent(responds, answer)):
-                correct += 1
-        elif (dataset_name == 'ArxivQA'):
-            responds = responds[0].upper()
-            answer = answer[0].upper()
-            print(f"query: {query}")
-            print(f"responds:{responds}")
-            print(f"answer:{answer}")
-            if (responds == answer):
-                correct += 1
-        elif (dataset_name == 'PlotQA'):
-            responds = preprocess_text(responds)
-            is_str = 1
-            if (type(answer) != str):
-                is_str = 0
-                answer = str(answer)
-            answer = preprocess_text(answer)
-            if ('%' in responds and '%' not in answer):
-                responds = responds.replace('%', '')
-            if ('%' not in responds and '%' in answer):
-                answer = answer.replace('%', '')
-            print(f"query: {query}")
-            print(f"responds:{responds}")
-            print(f"answer:{answer}")
-            if (responds == answer):
-                correct += 1
-            elif(is_numeric_data(responds) and (not is_str) and float(answer) != 0.0 and is_within_5_percent(responds, answer)):
-                correct += 1
-        elif (dataset_name == 'MP-DocVQA'):
-            responds = preprocess_text(responds)
-            if (not isinstance(answer, list)):
-                answer = [answer]
-            for i, answer_item in enumerate(answer):
-                answer[i] = preprocess_text(answer_item)
-            if ('%' in responds and '%' not in answer[0]):
-                responds = responds.replace('%', '')
-            if ('%' not in responds and '%' in answer[0]):
-                answer = [answer_item.replace('%', '') for answer_item in answer]
-            print(f"query: {query}")
-            print(f"responds:{responds}")
-            print(f"answer:{answer}")
-            for answer_item in answer:
-                if (responds == answer_item):
-                    correct += 1
-                    break
-        elif (dataset_name == 'SlideVQA'):
-            responds = preprocess_text(responds)
-            answer = preprocess_text(answer)
-            if ('%' in responds and '%' not in answer):
-                responds = responds.replace('%', '')
-            if ('%' not in responds and '%' in answer):
-                answer = answer.replace('%', '')
-            print(f"query: {query}")
-            print(f"responds:{responds}")
-            print(f"answer:{answer}")
-            if (responds == answer):
-                correct += 1
-        elif (dataset_name == 'InfoVQA'):
-            responds = preprocess_text(responds)
-            if (not isinstance(answer, list)):
-                answer = [answer]
-            for i, answer_item in enumerate(answer):
-                answer[i] = preprocess_text(answer_item)
-            if ('%' in responds and '%' not in answer[0]):
-                responds = responds.replace('%', '')
-            if ('%' not in responds and '%' in answer[0]):
-                answer = [answer_item.replace('%', '') for answer_item in answer]
-            print(f"query: {query}")
-            print(f"responds:{responds}")
-            print(f"answer:{answer}")
-            for answer_item in answer:
-                if (responds == answer_item):
-                    correct += 1
-                    break
         
-        history_data['preprocessed_responds'] = responds
-        history_data['preprocessed_answer'] = answer
+        response_correct, processed_responds, processed_answer = check_responses(args, responds, answer, query)
+        correct += response_correct     
+        
+        history_data['preprocessed_responds'] = processed_responds
+        history_data['preprocessed_answer'] = processed_answer
         history_data['original_responds'] = responds_backup
         
-
         # calculate accuracy
         print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
         print('---------------')
@@ -579,6 +493,100 @@ def get_responds_image_gpt(client, image_list, max_new_tokens):
                 print("Unable to call the API, skipping this call.")
                 responds = None
     return responds
+
+
+def check_responses(args, responds, answer, query):
+    #pre-process
+    correct = 0
+    if (args.dataset_name == 'ChartQA'):
+        responds = preprocess_text(responds)
+        answer = preprocess_text(answer)
+        if ('%' in responds and '%' not in answer):
+            responds = responds.replace('%', '')
+        if ('%' not in responds and '%' in answer):
+            answer = answer.replace('%', '')
+        print(f"query: {query}")
+        print(f"responds:{responds}")
+        print(f"answer:{answer}")
+        if (responds == answer):
+            correct = 1
+        elif(is_numeric_data(responds) and is_numeric_data(answer) and answer != '0' and is_within_5_percent(responds, answer)):
+            correct = 1
+    elif (args.dataset_name == 'ArxivQA'):
+        responds = responds[0].upper()
+        answer = answer[0].upper()
+        print(f"query: {query}")
+        print(f"responds:{responds}")
+        print(f"answer:{answer}")
+        if (responds == answer):
+            correct = 1
+    elif (args.dataset_name == 'PlotQA'):
+        responds = preprocess_text(responds)
+        is_str = 1
+        if (type(answer) != str):
+            is_str = 0
+            answer = str(answer)
+        answer = preprocess_text(answer)
+        if ('%' in responds and '%' not in answer):
+            responds = responds.replace('%', '')
+        if ('%' not in responds and '%' in answer):
+            answer = answer.replace('%', '')
+        print(f"query: {query}")
+        print(f"responds:{responds}")
+        print(f"answer:{answer}")
+        if (responds == answer):
+            correct = 1
+        elif(is_numeric_data(responds) and (not is_str) and float(answer) != 0.0 and is_within_5_percent(responds, answer)):
+            correct = 1
+    elif (args.dataset_name == 'MP-DocVQA'):
+        responds = preprocess_text(responds)
+        if (not isinstance(answer, list)):
+            answer = [answer]
+        for i, answer_item in enumerate(answer):
+            answer[i] = preprocess_text(answer_item)
+        if ('%' in responds and '%' not in answer[0]):
+            responds = responds.replace('%', '')
+        if ('%' not in responds and '%' in answer[0]):
+            answer = [answer_item.replace('%', '') for answer_item in answer]
+        print(f"query: {query}")
+        print(f"responds:{responds}")
+        print(f"answer:{answer}")
+        for answer_item in answer:
+            if (responds == answer_item):
+                correct = 1
+                break
+    elif (args.dataset_name == 'SlideVQA'):
+        responds = preprocess_text(responds)
+        answer = preprocess_text(answer)
+        if ('%' in responds and '%' not in answer):
+            responds = responds.replace('%', '')
+        if ('%' not in responds and '%' in answer):
+            answer = answer.replace('%', '')
+        print(f"query: {query}")
+        print(f"responds:{responds}")
+        print(f"answer:{answer}")
+        if (responds == answer):
+            correct = 1
+    elif (args.dataset_name == 'InfoVQA'):
+        responds = preprocess_text(responds)
+        if (not isinstance(answer, list)):
+            answer = [answer]
+        for i, answer_item in enumerate(answer):
+            answer[i] = preprocess_text(answer_item)
+        if ('%' in responds and '%' not in answer[0]):
+            responds = responds.replace('%', '')
+        if ('%' not in responds and '%' in answer[0]):
+            answer = [answer_item.replace('%', '') for answer_item in answer]
+        print(f"query: {query}")
+        print(f"responds:{responds}")
+        print(f"answer:{answer}")
+        for answer_item in answer:
+            if (responds == answer_item):
+                correct = 1
+                break
+    
+    return correct, responds, answer
+
 
 if __name__ == '__main__':
     main()
