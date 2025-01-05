@@ -154,10 +154,10 @@ def make_prefix_output_dir(output_dir, model_name, use_positive_sample, results_
     results_output_dir = os.path.join(output_dir, prefix)
     prefix += '_'
     if (use_positive_sample):
-        results_output_dir = os.path.join(output_dir, 'upper_bound')
+        results_output_dir = os.path.join(results_output_dir, 'upper_bound')
         prefix += 'upper_bound'
     else:
-        results_output_dir = os.path.join(output_dir, os.path.basename(results_root_dir))
+        results_output_dir = os.path.join(results_output_dir, os.path.basename(results_root_dir))
         prefix += str(os.path.basename(results_root_dir))
 
     if (use_positive_sample):
