@@ -520,12 +520,15 @@ def check_args(args):
         raise Exception("output_dir is None! Please write your output path.")
     if args.task_type == 'page_concatenation':
         if args.concatenate_type == None:
-            raise Exception("concatenate_type is None!")
-        if (args.concatenate_type not in ['horizontal', 'vertical']):
-                raise Exception("concatenate_type error!")
-    if (args.model_name == 'gpt4o'):
-        if (args.openai_api_key == None):
-            raise Exception("Model is gpt4o but openai_api_key is None! Please write your OpenAI API key in openai_api_key argument.")
+            raise Exception("concatenate_type is None with task_type == page_concatenation")
+        if args.concatenate_type not in ['horizontal', 'vertical']:
+                raise Exception("concatenate_type error: concatenate_type can only be 'horizontal' or 'vertical'.")
+    if args.model_name == 'gpt4o' and args.openai_api_key == None:
+        raise Exception("Model is gpt4o but openai_api_key is None! Please write your OpenAI API key in openai_api_key argument.")
+    
+    if args.model_name != 'gpt4o' and args.model_name_or_path == None:
+        raise Exception("model_name_or_path is None: please provide model path in model_name_or_path argument")
+
 
 if __name__ == '__main__':
     main()
