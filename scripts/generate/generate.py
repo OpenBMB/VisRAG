@@ -9,7 +9,6 @@ import base64
 from io import BytesIO
 from transformers import AutoTokenizer as Tokenizer_class
 from openmatch.generation_utils import get_flatten_table, preprocess_text, is_numeric_data, is_within_5_percent, horizontal_concat, vertical_concat
-from openai import OpenAI
 from datasets import load_dataset
 
 
@@ -68,35 +67,12 @@ def main():
     corpus = load_corpus(args)
     queries = load_dataset(args.dataset_name_or_path, name="queries", split="train")
 
-    #加载模型
-    if (task_type == 'weighted_selection'):
-        if (model_name == 'MiniCPMV2.0'):
-            from openmatch.modeling.weighted_selection.MiniCPMV20.modeling_minicpmv import MiniCPMV as ModelForCausalLM_class
+    if args.model_name == "gpt4o":
+        from openai import OpenAI
+        client = OpenAI(api_key=args.openai_api_key)
     else:
-        if (model_name == 'gpt4o'):
-            client = OpenAI(api_key=args.openai_api_key)
-        else:
-            from transformers import AutoModel as Model_class
-            from transformers import AutoModelForCausalLM as ModelForCausalLM_class
-        
-    if (model_name == 'MiniCPM'):
-        tokenizer = Tokenizer_class.from_pretrained(args.model_name_or_path)
-        model = ModelForCausalLM_class.from_pretrained(args.model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
-
-    elif (model_name == 'MiniCPMV2.0'):
-        tokenizer = Tokenizer_class.from_pretrained(args.model_name_or_path, trust_remote_code=True)
-        model = ModelForCausalLM_class.from_pretrained(args.model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
-        model = model.to(device='cuda', dtype=torch.bfloat16)
-        model.eval()
-
-    elif (model_name == 'MiniCPMV2.6'):
-        model = Model_class.from_pretrained(args.model_name_or_path, trust_remote_code=True,
-            attn_implementation='sdpa', torch_dtype=torch.bfloat16)
-        model = model.eval().cuda()
-        tokenizer = Tokenizer_class.from_pretrained(args.model_name_or_path, trust_remote_code=True)
-
-    if (model_name != 'gpt4o'):
-        model.to(args.rank)
+        model, tokenizer = load_model_and_tokenizer(args)
+    
     
     history_datas = []
     correct = 0
@@ -525,6 +501,37 @@ def load_corpus(args):
             corpus[corpus_id] = image  
 
     return corpus
+
+
+def load_model_and_tokenizer(args):
+    #加载模型
+    if (args.task_type == 'weighted_selection'):
+        if (args.model_name == 'MiniCPMV2.0'):
+            from openmatch.modeling.weighted_selection.MiniCPMV20.modeling_minicpmv import MiniCPMV as ModelForCausalLM_class
+    else:
+        from transformers import AutoModel as Model_class
+        from transformers import AutoModelForCausalLM as ModelForCausalLM_class
+        
+    if (args.model_name == 'MiniCPM'):
+        tokenizer = Tokenizer_class.from_pretrained(args.model_name_or_path)
+        model = ModelForCausalLM_class.from_pretrained(args.model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
+
+    elif (args.model_name == 'MiniCPMV2.0'):
+        tokenizer = Tokenizer_class.from_pretrained(args.model_name_or_path, trust_remote_code=True)
+        model = ModelForCausalLM_class.from_pretrained(args.model_name_or_path, torch_dtype=torch.bfloat16, trust_remote_code=True)
+        model = model.to(device='cuda', dtype=torch.bfloat16)
+        model.eval()
+
+    elif (args.model_name == 'MiniCPMV2.6'):
+        model = Model_class.from_pretrained(args.model_name_or_path, trust_remote_code=True,
+            attn_implementation='sdpa', torch_dtype=torch.bfloat16)
+        model = model.eval().cuda()
+        tokenizer = Tokenizer_class.from_pretrained(args.model_name_or_path, trust_remote_code=True)
+
+    if (args.model_name != 'gpt4o'):
+        model.to(args.rank)
+
+    return model, tokenizer
 
 
 if __name__ == '__main__':
