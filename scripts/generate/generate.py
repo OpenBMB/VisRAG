@@ -97,53 +97,7 @@ def main():
         history_data['docid'] = docid
         
         if (task_type == 'text'):
-            if (dataset_name == 'ChartQA'):
-                table_dir = None # Write your table path here
-                if (table_dir == None):
-                    raise Exception("""table_dir is None! Please download the table data from https://huggingface.co/datasets/ahmed-masry/ChartQA/tree/main""")
-                csv_file_path = [os.path.join(table_dir, f"{docid_item.split('.')[0]}.csv") for docid_item in docid] # get table 
-                doc_list = [get_flatten_table(csv_file_path_item) for csv_file_path_item in csv_file_path]
-                doc = '\n'.join(doc_list)
-                input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
-            elif (dataset_name == 'ArxivQA'):
-                prompt = ''
-                doc_list = [corpus[docid_item] for docid_item in docid]
-                doc = '\n'.join(doc_list)
-                options = example['options']
-                options_prompt = 'Options:\n'
-                # if A, B, C, D is not at the beginning
-                flag = 0
-                for i, option in enumerate(options):
-                    if not option.startswith(f"{chr(65 + i)}"):
-                        flag = 1
-                        break
-                if flag:
-                    # pre-process
-                    for i, option in enumerate(options):
-                        options[i] = f"{chr(65 + i)}. {option.strip()}"
-                for item in options:
-                    options_prompt += f'{item}\n'
-                prompt += f'Hint: {doc}\n'
-                prompt += f'Question: {query}\n'
-                prompt += options_prompt
-                prompt += '''Answer directly with the letter of the correct option as the first character.'''
-                input = prompt
-            elif (dataset_name == 'PlotQA'):
-                doc_list = [corpus[docid_item] for docid_item in docid]
-                doc = '\n'.join(doc_list)
-                input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
-            elif (dataset_name == 'MP-DocVQA'):
-                doc_list = [corpus[docid_item] for docid_item in docid]
-                doc = '\n'.join(doc_list)
-                input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
-            elif (dataset_name == 'SlideVQA'):
-                doc_list = [corpus[docid_item] for docid_item in docid]
-                doc = '\n'.join(doc_list)
-                input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
-            elif (dataset_name == 'InfoVQA'):
-                doc_list = [corpus[docid_item] for docid_item in docid]
-                doc = '\n'.join(doc_list)
-                input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
+            input = get_input_text(args, query, corpus, docid, example)
             
             history_data['prompt'] = input
             
@@ -546,6 +500,57 @@ def get_docid_and_doc_scores(args, qid, run):
 
     return docid, doc_scores
 
+
+def get_input_text(args, query, corpus, docid, example):
+    if (args.dataset_name == 'ChartQA'):
+        table_dir = None # Write your table path here
+        if (table_dir == None):
+            raise Exception("""table_dir is None! Please download the table data from https://huggingface.co/datasets/ahmed-masry/ChartQA/tree/main""")
+        csv_file_path = [os.path.join(table_dir, f"{docid_item.split('.')[0]}.csv") for docid_item in docid] # get table 
+        doc_list = [get_flatten_table(csv_file_path_item) for csv_file_path_item in csv_file_path]
+        doc = '\n'.join(doc_list)
+        input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
+    elif (args.dataset_name == 'ArxivQA'):
+        prompt = ''
+        doc_list = [corpus[docid_item] for docid_item in docid]
+        doc = '\n'.join(doc_list)
+        options = example['options']
+        options_prompt = 'Options:\n'
+        # if A, B, C, D is not at the beginning
+        flag = 0
+        for i, option in enumerate(options):
+            if not option.startswith(f"{chr(65 + i)}"):
+                flag = 1
+                break
+        if flag:
+            # pre-process
+            for i, option in enumerate(options):
+                options[i] = f"{chr(65 + i)}. {option.strip()}"
+        for item in options:
+            options_prompt += f'{item}\n'
+        prompt += f'Hint: {doc}\n'
+        prompt += f'Question: {query}\n'
+        prompt += options_prompt
+        prompt += '''Answer directly with the letter of the correct option as the first character.'''
+        input = prompt
+    elif (args.dataset_name == 'PlotQA'):
+        doc_list = [corpus[docid_item] for docid_item in docid]
+        doc = '\n'.join(doc_list)
+        input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
+    elif (args.dataset_name == 'MP-DocVQA'):
+        doc_list = [corpus[docid_item] for docid_item in docid]
+        doc = '\n'.join(doc_list)
+        input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
+    elif (args.dataset_name == 'SlideVQA'):
+        doc_list = [corpus[docid_item] for docid_item in docid]
+        doc = '\n'.join(doc_list)
+        input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
+    elif (args.dataset_name == 'InfoVQA'):
+        doc_list = [corpus[docid_item] for docid_item in docid]
+        doc = '\n'.join(doc_list)
+        input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
+
+    return input 
 
 if __name__ == '__main__':
     main()
