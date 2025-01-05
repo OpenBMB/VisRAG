@@ -124,13 +124,13 @@ def main():
 
         if (args.task_type == 'weighted_selection'):
             if (args.model_name == 'MiniCPMV2.0'):
-                responds = get_responds_image_weighted_selection(model, image_list, doc_scores, tokenizer, max_new_tokens)
+                responds = get_responds_image_weighted_selection(model, input, image_list, doc_scores, tokenizer, max_new_tokens)
         elif args.model_name == 'gpt4o':
-            responds = get_responds_image_gpt(client, image_list, max_new_tokens)
+            responds = get_responds_image_gpt(client, input, image_list, max_new_tokens)
             if responds == None:
                 continue
         else:
-            responds = get_responds_image(args, model, tokenizer, image_list, max_new_tokens)
+            responds = get_responds_image(args, model, input, tokenizer, image_list, max_new_tokens)
             
         total_num += 1
         responds_backup = responds
@@ -421,7 +421,7 @@ def get_input_image(args, query, example):
     return input
         
 
-def get_responds_image(args, model, tokenizer, image_list, max_new_tokens):
+def get_responds_image(args, model, input, tokenizer, image_list, max_new_tokens):
     if (args.task_type == 'page_concatenation'):
         if (args.model_name == 'MiniCPMV2.0'):
             responds, _, _ = model.chat(
@@ -445,7 +445,7 @@ def get_responds_image(args, model, tokenizer, image_list, max_new_tokens):
     return responds       
 
 
-def get_responds_image_weighted_selection(model, image_list, doc_scores, tokenizer, max_new_tokens):
+def get_responds_image_weighted_selection(model, input, image_list, doc_scores, tokenizer, max_new_tokens):
     responds = model.weighted_selection(
                 image_list=image_list,
                 msgs=input,
@@ -458,7 +458,7 @@ def get_responds_image_weighted_selection(model, image_list, doc_scores, tokeniz
     return responds 
 
 
-def get_responds_image_gpt(client, image_list, max_new_tokens):
+def get_responds_image_gpt(client, input, image_list, max_new_tokens):
     max_retries = 10
     retries = 0
     while retries < max_retries:
