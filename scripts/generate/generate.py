@@ -95,7 +95,7 @@ def main():
         
         docid, doc_scores = get_docid_and_doc_scores(args, qid, run)
         history_data['docid'] = docid
-        
+
         if (task_type == 'text'):
             input = get_input_text(args, query, corpus, docid, example)
             
@@ -118,37 +118,9 @@ def main():
                     image_list = [horizontal_concat(image_list)]
                 elif (args.concatenate_type == 'vertical'):
                     image_list = [vertical_concat(image_list)]
-                
-            if (dataset_name == 'ChartQA'):
-                input = [{'role': 'user', 'content': f"Answer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"}]
-            elif (dataset_name == 'ArxivQA'):
-                prompt = ''
-                options = example['options']
-                options_prompt = 'Options:\n'
-                # if A, B, C, D is not at the beginning
-                flag = 0
-                for i, option in enumerate(options):
-                    if not option.startswith(f"{chr(65 + i)}"):
-                        flag = 1
-                        break
-                if flag:
-                    # pre-process
-                    for i, option in enumerate(options):
-                        options[i] = f"{chr(65 + i)}. {option.strip()}"
-                for item in options:
-                    options_prompt += f'{item}\n'
-                prompt += f'Question: {query}\n'
-                prompt += options_prompt
-                prompt += '''Answer directly with the letter of the correct option as the first character.'''
-                input = [{'role': 'user', 'content': prompt}]
-            elif (dataset_name == 'PlotQA'):
-                input = [{'role': 'user', 'content': f"Answer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"}]
-            elif (dataset_name == 'MP-DocVQA'):
-                input = [{'role': 'user', 'content': f"Answer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"}]
-            elif (dataset_name == 'SlideVQA'):
-                input = [{'role': 'user', 'content': f"Answer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"}]
-            elif (dataset_name == 'InfoVQA'):
-                input = [{'role': 'user', 'content': f"Answer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"}]
+
+            input = get_input_image(args, query, example)  
+            
             
             history_data['prompt'] = input[0]['content']
 
@@ -561,6 +533,41 @@ def get_responds_text_gpt(client, max_new_tokens):
 
     return responds
 
+
+def get_input_image(args, query, example):
+    if (args.dataset_name == 'ChartQA'):
+        input = [{'role': 'user', 'content': f"Answer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"}]
+    elif (args.dataset_name == 'ArxivQA'):
+        prompt = ''
+        options = example['options']
+        options_prompt = 'Options:\n'
+        # if A, B, C, D is not at the beginning
+        flag = 0
+        for i, option in enumerate(options):
+            if not option.startswith(f"{chr(65 + i)}"):
+                flag = 1
+                break
+        if flag:
+            # pre-process
+            for i, option in enumerate(options):
+                options[i] = f"{chr(65 + i)}. {option.strip()}"
+        for item in options:
+            options_prompt += f'{item}\n'
+        prompt += f'Question: {query}\n'
+        prompt += options_prompt
+        prompt += '''Answer directly with the letter of the correct option as the first character.'''
+        input = [{'role': 'user', 'content': prompt}]
+    elif (args.dataset_name == 'PlotQA'):
+        input = [{'role': 'user', 'content': f"Answer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"}]
+    elif (args.dataset_name == 'MP-DocVQA'):
+        input = [{'role': 'user', 'content': f"Answer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"}]
+    elif (args.dataset_name == 'SlideVQA'):
+        input = [{'role': 'user', 'content': f"Answer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"}]
+    elif (args.dataset_name == 'InfoVQA'):
+        input = [{'role': 'user', 'content': f"Answer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"}]
+
+    return input
+        
 
 if __name__ == '__main__':
     main()
