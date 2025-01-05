@@ -100,39 +100,15 @@ def main():
             input = get_input_text(args, query, corpus, docid, example)
             
             history_data['prompt'] = input
-            
-            if (model_name == 'MiniCPM'):
-                responds, history = model.chat(tokenizer, input, temperature=0.8, top_p=0.8, max_new_tokens=max_new_tokens)
-            elif (model_name == 'gpt4o'):
-                max_retries = 10
-                retries = 0
-                while retries < max_retries:
-                    try:
-                        response = client.chat.completions.create(
-                            model="gpt-4o",
-                            messages=[
-                                {
-                                    "role": "user",
-                                    "content": [
-                                        {
-                                            "type": "text",
-                                            "text": f"{input}"
-                                        }
-                                    ],
-                                }
-                            ],
-                            max_tokens=max_new_tokens,
-                        )
-                        responds = response.choices[0].message.content
-                        break
-                    except Exception as e:
-                        retries += 1
-                        print(f"retry times: {retries}/{max_retries}")
-                        if retries >= max_retries:
-                            print("Unable to call the API, skipping this call.")
-                            responds = None
-                if (retries >= max_retries):
+
+            if args.model_name == "gpt4o":
+                # If gpt4o request time-outs -> responds == None -> skip this example
+                responds = get_responds_text_gpt(client, max_new_tokens)
+                if responds == None:
                     continue
+                
+            else:
+                responds, history = model.chat(tokenizer, input, temperature=0.8, top_p=0.8, max_new_tokens=max_new_tokens)
                     
         else:
             image_list = [corpus[docid_item] for docid_item in docid]
@@ -551,6 +527,40 @@ def get_input_text(args, query, corpus, docid, example):
         input = f"Image:{doc}\nAnswer the question using a single word or phrase.\nQuestion:{query}\nAnswer:"
 
     return input 
+
+
+def get_responds_text_gpt(client, max_new_tokens):
+    max_retries = 10
+    retries = 0
+    responds = None
+    while retries < max_retries:
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": f"{input}"
+                            }
+                        ],
+                    }
+                ],
+                max_tokens=max_new_tokens,
+            )
+            responds = response.choices[0].message.content
+            break
+        except Exception as e:
+            retries += 1
+            print(f"retry times: {retries}/{max_retries}")
+            if retries >= max_retries:
+                print("Unable to call the API, skipping this call.")
+                responds = None
+
+    return responds
+
 
 if __name__ == '__main__':
     main()
