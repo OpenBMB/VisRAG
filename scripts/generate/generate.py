@@ -48,21 +48,17 @@ def main():
     args = parse_args()
     check_args(args)
 
-    model_name = args.model_name
-    dataset_name = args.dataset_name
-
-    if (dataset_name == 'ArxivQA'):
+    if (args.dataset_name == 'ArxivQA'):
         max_new_tokens = 2
     else:
         max_new_tokens = 20
     
     if (not args.use_positive_sample):
-        run = get_run(args, dataset_name)
+        run = get_run(args, args.dataset_name)
         
-    task_type = args.task_type
     if args.dataset_name_or_path == None:
         print(f"dataset_name_or_path not provided: Trying to load dataset and corpus from HF...")
-        args.dataset_name_or_path = f"openbmb/VisRAG-Ret-Test-{dataset_name}"
+        args.dataset_name_or_path = f"openbmb/VisRAG-Ret-Test-{args.dataset_name}"
     
     corpus = load_corpus(args)
     queries = load_dataset(args.dataset_name_or_path, name="queries", split="train")
@@ -96,7 +92,7 @@ def main():
         docid, doc_scores = get_docid_and_doc_scores(args, qid, run)
         history_data['docid'] = docid
 
-        if (task_type == 'text'):
+        if (args.task_type == 'text'):
             input = get_input_text(args, query, corpus, docid, example)
             
             history_data['prompt'] = input
@@ -113,7 +109,7 @@ def main():
         else:
             image_list = [corpus[docid_item] for docid_item in docid]
             
-            if (task_type == 'page_concatenation'):
+            if (args.task_type == 'page_concatenation'):
                 if (args.concatenate_type == 'horizontal'):
                     image_list = [horizontal_concat(image_list)]
                 elif (args.concatenate_type == 'vertical'):
@@ -143,12 +139,12 @@ def main():
         history_data['original_responds'] = responds_backup
         
         # calculate accuracy
-        print(f"{dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
+        print(f"{args.dataset_name}:{total_num}_Accuracy:{float(correct) / total_num}")
         print('---------------')
             
         history_datas.append(json.dumps(history_data))
     
-    prefix, results_output_dir = make_prefix_output_dir(args.output_dir, model_name, args.use_positive_sample, args.results_root_dir, dataset_name, task_type, args.topk)
+    prefix, results_output_dir = make_prefix_output_dir(args.output_dir, args.model_name, args.use_positive_sample, args.results_root_dir, args.dataset_name, args.task_type, args.topk)
     write_results(results_output_dir, prefix, correct, total_num)   
     write_history(results_output_dir, prefix, history_datas)
 
