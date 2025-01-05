@@ -78,8 +78,10 @@ def main():
     correct = 0
     total_num = 0
     for cnt, example in enumerate(queries):
+        
         if (cnt % args.world_size != args.rank):
             continue
+
         history_data = {}
         query = example['query']
         history_data['query'] = query
@@ -87,33 +89,13 @@ def main():
         history_data['qid'] = qid
         answer = example['answer']
         history_data['original_answer'] = answer
+
         if (answer == None):
             raise Exception("answer is None!")
-        if (args.use_positive_sample):
-            if (dataset_name == 'SlideVQA'):
-                # due to the special format of SlideVQA, we need to split the qid to get the ground truth docid
-                docid = qid.split('query_number')[0]
-                docid = docid.split('tcy6')
-            else:
-                docid = [qid[:-1 - len(qid.split('-')[-1])]]
-
-            if (task_type == 'weighted_selection'):
-                doc_scores = len(docid) * [1/len(docid)]
-        else:
-            # get top-k docid
-            docid = []
-            doc_scores = []
-            doc_cnt = 0
-            for key, value in sorted(run[qid].items(), key=lambda item: item[1], reverse=True):
-                if (doc_cnt < args.topk):
-                    docid.append(key)
-                    doc_scores.append(value)
-                    doc_cnt += 1
-                else:
-                    break
-            if (len(docid) < args.topk):
-                raise Exception("len(docid) < topk!")
+        
+        docid, doc_scores = get_docid_and_doc_scores(args, qid, run)
         history_data['docid'] = docid
+        
         if (task_type == 'text'):
             if (dataset_name == 'ChartQA'):
                 table_dir = None # Write your table path here
@@ -532,6 +514,37 @@ def load_model_and_tokenizer(args):
         model.to(args.rank)
 
     return model, tokenizer
+
+
+def get_docid_and_doc_scores(args, qid, run):
+    docid = []
+    doc_scores = []
+    if (args.use_positive_sample):
+        if (args.dataset_name == 'SlideVQA'):
+            # due to the special format of SlideVQA, we need to split the qid to get the ground truth docid
+            docid = qid.split('query_number')[0]
+            docid = docid.split('tcy6')
+        else:
+            docid = [qid[:-1 - len(qid.split('-')[-1])]]
+
+        if (args.task_type == 'weighted_selection'):
+            doc_scores = len(docid) * [1/len(docid)]
+    else:
+        # get top-k docid
+        docid = []
+        doc_scores = []
+        doc_cnt = 0
+        for key, value in sorted(run[qid].items(), key=lambda item: item[1], reverse=True):
+            if (doc_cnt < args.topk):
+                docid.append(key)
+                doc_scores.append(value)
+                doc_cnt += 1
+            else:
+                break
+        if (len(docid) < args.topk):
+            raise Exception("len(docid) < topk!")
+
+    return docid, doc_scores
 
 
 if __name__ == '__main__':
