@@ -108,7 +108,7 @@ def main():
                     continue
                 
             else:
-                responds, history = model.chat(tokenizer, input, temperature=0.8, top_p=0.8, max_new_tokens=max_new_tokens)
+                responds, _ = model.chat(tokenizer, input, temperature=0.8, top_p=0.8, max_new_tokens=max_new_tokens)
                     
         else:
             image_list = [corpus[docid_item] for docid_item in docid]
@@ -120,81 +120,19 @@ def main():
                     image_list = [vertical_concat(image_list)]
 
             input = get_input_image(args, query, example)  
-            
-            
             history_data['prompt'] = input[0]['content']
 
-            if (task_type == 'page_concatenation'):
-                if (model_name == 'MiniCPMV2.0'):
-                    responds, context, _ = model.chat(
-                        image=image_list[0], # image_list only has one element
-                        msgs=input,
-                        context=None,
-                        tokenizer=tokenizer,
-                        sampling=False,
-                        max_new_tokens=max_new_tokens
-                    )
-            elif (task_type == 'multi_image'):
-                if (model_name == 'MiniCPMV2.6'):
-                    input = [{'role': 'user', 'content': image_list + [input[0]['content']]}]
-                    responds = model.chat(
-                        image=None,
-                        msgs=input,
-                        tokenizer=tokenizer,
-                        sampling=False,
-                        max_new_tokens=max_new_tokens
-                    )
-                elif (model_name == 'gpt4o'):
-                    max_retries = 10
-                    retries = 0
-                    while retries < max_retries:
-                        try:
-                            messages = [
-                                {
-                                    "role": "user",
-                                    "content": [
-                                        {
-                                            "type": "text",
-                                            "text": f"{input[0]['content']}"
-                                        }
-                                    ],
-                                }
-                            ]
-                            for base64_string_item in images_to_base64_list(image_list):
-                                messages[0]["content"].append({
-                                    "type": "image_url",
-                                    "image_url": {"url": f"data:image/png;base64,{base64_string_item}"}
-                                })
-
-                            response = client.chat.completions.create(
-                                model="gpt-4o",
-                                messages=messages,
-                                max_tokens=max_new_tokens,
-                            )
-                            responds = response.choices[0].message.content
-                            break
-                        except Exception as e:
-                            retries += 1
-                            print(f"retry times: {retries}/{max_retries}")
-                            if retries >= max_retries:
-                                print("Unable to call the API, skipping this call.")
-                                responds = None
-                    if (retries >= max_retries):
-                        continue
-            elif (task_type == 'weighted_selection'):
-                if (model_name == 'MiniCPMV2.0'):
-                    responds = model.weighted_selection(
-                    image_list=image_list,
-                    msgs=input,
-                    doc_scores=doc_scores,
-                    context=None,
-                    tokenizer=tokenizer,
-                    sampling=False,
-                    max_new_tokens=max_new_tokens
-                    )
+        if (args.task_type == 'weighted_selection'):
+            if (args.model_name == 'MiniCPMV2.0'):
+                responds = get_responds_image_weighted_selection(model, image_list, doc_scores, tokenizer, max_new_tokens)
+        elif args.model_name == 'gpt4o':
+            responds = get_responds_image_gpt(client, image_list, max_new_tokens)
+            if responds == None:
+                continue
+        else:
+            responds = get_responds_image(args, model, tokenizer, image_list, max_new_tokens)
             
         total_num += 1
-        
         responds_backup = responds
             
         #pre-process
@@ -568,6 +506,79 @@ def get_input_image(args, query, example):
 
     return input
         
+
+def get_responds_image(args, model, tokenizer, image_list, max_new_tokens):
+    if (args.task_type == 'page_concatenation'):
+        if (args.model_name == 'MiniCPMV2.0'):
+            responds, _, _ = model.chat(
+                image=image_list[0], # image_list only has one element
+                msgs=input,
+                context=None,
+                tokenizer=tokenizer,
+                sampling=False,
+                max_new_tokens=max_new_tokens
+            )
+    elif (args.task_type == 'multi_image'):
+        if (args.model_name == 'MiniCPMV2.6'):
+            input = [{'role': 'user', 'content': image_list + [input[0]['content']]}]
+            responds = model.chat(
+                image=None,
+                msgs=input,
+                tokenizer=tokenizer,
+                sampling=False,
+                max_new_tokens=max_new_tokens
+            )
+    return responds       
+
+def get_responds_image_weighted_selection(model, image_list, doc_scores, tokenizer, max_new_tokens):
+    responds = model.weighted_selection(
+                image_list=image_list,
+                msgs=input,
+                doc_scores=doc_scores,
+                context=None,
+                tokenizer=tokenizer,
+                sampling=False,
+                max_new_tokens=max_new_tokens
+                )
+    return responds 
+
+
+def get_responds_image_gpt(client, image_list, max_new_tokens):
+    max_retries = 10
+    retries = 0
+    while retries < max_retries:
+        try:
+            messages = [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": f"{input[0]['content']}"
+                        }
+                    ],
+                }
+            ]
+            for base64_string_item in images_to_base64_list(image_list):
+                messages[0]["content"].append({
+                    "type": "image_url",
+                    "image_url": {"url": f"data:image/png;base64,{base64_string_item}"}
+                })
+
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=messages,
+                max_tokens=max_new_tokens,
+            )
+            responds = response.choices[0].message.content
+            break
+        except Exception as e:
+            retries += 1
+            print(f"retry times: {retries}/{max_retries}")
+            if retries >= max_retries:
+                print("Unable to call the API, skipping this call.")
+                responds = None
+    return responds
 
 if __name__ == '__main__':
     main()
