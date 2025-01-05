@@ -164,7 +164,9 @@ def make_prefix_output_dir(output_dir, model_name, use_positive_sample, results_
         prefix = f"{prefix}_{dataset_name}_oracle"
     else:
         prefix = f"{prefix}_{dataset_name}_{task_type}_top{topk}"
+    
     os.makedirs(results_output_dir, exist_ok=True)
+    return prefix, results_output_dir
 
 
 def write_results(output_dir, prefix, correct, total_num):
