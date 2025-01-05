@@ -444,6 +444,7 @@ def get_responds_image(args, model, tokenizer, image_list, max_new_tokens):
             )
     return responds       
 
+
 def get_responds_image_weighted_selection(model, image_list, doc_scores, tokenizer, max_new_tokens):
     responds = model.weighted_selection(
                 image_list=image_list,
