@@ -264,8 +264,7 @@ def load_model_and_tokenizer(args):
         model = model.eval().cuda()
         tokenizer = Tokenizer_class.from_pretrained(args.model_name_or_path, trust_remote_code=True)
 
-    if (args.model_name != 'gpt4o'):
-        model.to(args.rank)
+    model.to(args.rank)
 
     return model, tokenizer
 
