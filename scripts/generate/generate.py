@@ -29,6 +29,7 @@ def parse_args():
     parser.add_argument('--model_name', type=str, required=True, choices=['MiniCPM', 'MiniCPMV2.0', 'MiniCPMV2.6', 'gpt4o'])
     parser.add_argument('--model_name_or_path', type=str, required=True)
     parser.add_argument('--dataset_name', type=str, choices=['ArxivQA', 'ChartQA', 'PlotQA', 'MP-DocVQA', 'SlideVQA', 'InfoVQA'], required=True)
+    parser.add_argument('--dataset_name_or_path', type=str, required=False)
     parser.add_argument('--rank', type=int, required=True)
     parser.add_argument('--world_size', type=int, required=True)
 
@@ -60,34 +61,12 @@ def main():
         run = get_run(args, dataset_name)
         
     task_type = args.task_type
-    # Load corpus
-    corpus = {} # Build a dict that maps docid to OCR results or image
-    if (task_type == 'text'):
-        """
-        Please write the logic for reading OCR results and building a dict that maps docid to OCR results yourself,
-        as different people might have different ways of organizing those results.
-        """
-        raise Exception("Please write the logic yourself.")
-    else:
-        """
-        Please write either a HF dataset name or a path to the dataset here.
-        For example,
-        dataset_name_or_path = 'openbmb/VisRAG-Ret-Test-ArxivQA'
-        dataset_name_or_path = '/path/to/VisRAG-Ret-Test-ArxivQA'
-        """
-        dataset_name_or_path = f"openbmb/VisRAG-Ret-Test-{dataset_name}"
-        corpus_ds = load_dataset(dataset_name_or_path, name="corpus", split="train")
-        print(f"We defaultly load the dataset (corpus) from HF, if you want to load the dataset from local, please modify the dataset_name_or_path in the script.")
-        for i in range(len(corpus_ds)):
-            corpus_id = corpus_ds[i]['corpus-id']
-            image = corpus_ds[i]['image'].convert('RGB')
-            corpus[corpus_id] = image  
-
-    # Load queries
-    dataset_name_or_path = f"openbmb/VisRAG-Ret-Test-{dataset_name}"
-    queries = load_dataset(dataset_name_or_path, name="queries", split="train")
-    print(f"We defaultly load the dataset (queries) from HF, if you want to load the dataset from local, please modify the dataset_name_or_path in the script.")
-
+    if args.dataset_name_or_path == None:
+        print(f"dataset_name_or_path not provided: Trying to load dataset and corpus from HF...")
+        args.dataset_name_or_path = f"openbmb/VisRAG-Ret-Test-{dataset_name}"
+    
+    corpus = load_corpus(args)
+    queries = load_dataset(args.dataset_name_or_path, name="queries", split="train")
 
     #加载模型
     if (task_type == 'weighted_selection'):
@@ -528,6 +507,24 @@ def check_args(args):
     
     if args.model_name != 'gpt4o' and args.model_name_or_path == None:
         raise Exception("model_name_or_path is None: please provide model path in model_name_or_path argument")
+
+
+def load_corpus(args):
+    if (args.task_type == 'text'):
+        """
+        Please write the logic for reading OCR results and building a dict that maps docid to OCR results yourself,
+        as different people might have different ways of organizing those results.
+        """
+        raise Exception("Please write the logic yourself.")
+    else:
+        corpus_ds = load_dataset(args.dataset_name_or_path, name="corpus", split="train")
+        corpus = {} # Build a dict that maps docid to OCR results or image
+        for i in range(len(corpus_ds)):
+            corpus_id = corpus_ds[i]['corpus-id']
+            image = corpus_ds[i]['image'].convert('RGB')
+            corpus[corpus_id] = image  
+
+    return corpus
 
 
 if __name__ == '__main__':
