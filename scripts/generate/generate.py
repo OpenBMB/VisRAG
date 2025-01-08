@@ -118,15 +118,15 @@ def main():
             input = get_input_image(args, query, example)  
             history_data['prompt'] = input[0]['content']
 
-        if (args.task_type == 'weighted_selection'):
-            if (args.model_name == 'MiniCPMV2.0'):
-                responds = get_responds_image_weighted_selection(model, input, image_list, doc_scores, tokenizer, max_new_tokens)
-        elif args.model_name == 'gpt4o':
-            responds = get_responds_image_gpt(client, input, image_list, max_new_tokens)
-            if responds == None:
-                continue
-        else:
-            responds = get_responds_image(args, model, input, tokenizer, image_list, max_new_tokens)
+            if (args.task_type == 'weighted_selection'):
+                if (args.model_name == 'MiniCPMV2.0'):
+                    responds = get_responds_image_weighted_selection(model, input, image_list, doc_scores, tokenizer, max_new_tokens)
+            elif args.model_name == 'gpt4o':
+                responds = get_responds_image_gpt(client, input, image_list, max_new_tokens)
+                if responds == None:
+                    continue
+            else:
+                responds = get_responds_image(args, model, input, tokenizer, image_list, max_new_tokens)
             
         total_num += 1
         responds_backup = responds
