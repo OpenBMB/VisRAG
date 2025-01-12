@@ -95,18 +95,22 @@ There are three settings in our generation: text-based generation, single-image-
 ```bash
 python scripts/generate/generate.py \
 --model_name <model_name> \
+--model_name_or_path <model_path> \
 --dataset_name <dataset_name> \
---rank <process_rank> \
+--dataset_name_or_path <dataset_path> \
+--rank <process_rank> \ 
 --world_size <world_size> \
---use_positive_sample <use_positive_sample> \
 --topk <number of docs retrieved for generation> \
 --results_root_dir <retrieval_results_dir> \
 --task_type <task_type> \
 --concatenate_type <image_concatenate_type> \
+--output_dir <output_dir>
 ```
 Note:
-1. `use_positive_sample` indicates whether to use retrieved documents or just the positive document for the query. `topk` and `results_root_dir` are only needed when `use_positive_sample` is set to 0. The `results_root_dir` should be organized as follows: `results_root_dir/dataset_name/*.trec`.
-2. `concatenate_type` is needed only when `task_type` is set to `page_concatenation`. It specifies the type of concatenation used to combine several images.
+1. `use_positive_sample` determines whether to use only the positive document for the query. Enable this to exclude retrieved documents and omit `topk` and `results_root_dir`. If disabled, you must specify `topk` (number of retrieved documents) and organize `results_root_dir` as `results_root_dir/dataset_name/*.trec`.
+2. `concatenate_type` is only needed when `task_type` is set to `page_concatenation`. Omit this if not required.
+3. Always specify `model_name_or_path`, `dataset_name_or_path`, and `output_dir`.
+4. Use `--openai_api_key` only if GPT-based evaluation is needed.
 
 # 🔧 Usage
 
