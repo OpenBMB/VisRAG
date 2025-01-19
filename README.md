@@ -46,7 +46,9 @@ In the paper, We use MiniCPM-V 2.0, MiniCPM-V 2.6 and GPT-4o as the generators. 
 # ⚙️ Setup
 
 ```bash
+git clone https://github.com/OpenBMB/VisRAG.git
 conda create --name VisRAG python==3.10.8
+conda activate VisRAG
 conda install nvidia/label/cuda-11.8.0::cuda-toolkit
 cd VisRAG
 pip install -r requirements.txt
