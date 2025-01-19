@@ -23,16 +23,14 @@ def retrieve(knowledge_base_path: str, query: str, topk: int):
     with open(os.path.join(knowledge_base_path, 'index2img_filename.txt'), 'r') as f:
         index2img_filename = f.read().split('\n')
     
-    doc_list = [f for f in os.listdir(knowledge_base_path) if f.endswith('.npy')]
-    doc_reps = [np.load(os.path.join(knowledge_base_path, f)) for f in doc_list]
-    doc_reps_cat = torch.cat([torch.Tensor(i) for i in doc_reps], dim=0)
-    doc_reps_cat = torch.cat([torch.Tensor(i) for i in doc_reps_cat], dim=0)
+    doc_reps = np.load(os.path.join(knowledge_base_path, 'reps.npy'))
+    doc_reps = torch.from_numpy(doc_reps).cuda()
 
     query_with_instruction = "Represent this query for retrieving relevant document: " + query
     with torch.no_grad():
-        query_rep = torch.Tensor(encode(model, tokenizer, [query_with_instruction]))
+        query_rep = torch.Tensor(encode(model, tokenizer, [query_with_instruction])).cuda()
 
-    similarities = torch.matmul(query_rep, doc_reps_cat.T)
+    similarities = torch.matmul(query_rep, doc_reps.T)
 
     topk_values, topk_doc_ids = torch.topk(similarities, k=topk)
 

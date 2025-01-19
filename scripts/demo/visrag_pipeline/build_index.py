@@ -12,7 +12,7 @@ import numpy as np
 from utils import encode
 
 def add_pdfs(pdf_dir):
-    global model, tokenizer
+    global model, tokenizer, knowledge_base_path
     model.eval()
 
     pdf_file_list = [f for f in os.listdir(pdf_dir) if f.endswith('.pdf')]
@@ -49,7 +49,10 @@ def add_pdfs(pdf_dir):
             image.save(cache_image_path)
             index2img_filename.append(os.path.basename(cache_image_path))
 
-        np.save(os.path.join(knowledge_base_path, f"{pdf_name.split('.')[0]}.npy"), reps_list)
+    reps_list = [torch.from_numpy(reps) for reps in reps_list]
+    final_reps = torch.cat(reps_list, dim=0)
+
+    np.save(os.path.join(knowledge_base_path, f"reps.npy"), final_reps.cpu().numpy())
 
     with open(os.path.join(knowledge_base_path, 'index2img_filename.txt'), 'w') as f:
         f.write('\n'.join(index2img_filename))
