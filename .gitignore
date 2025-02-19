@@ -171,3 +171,5 @@ kb/
 /checkpoints
 /wandb
 /tensorboard
+
+.DS_Store
