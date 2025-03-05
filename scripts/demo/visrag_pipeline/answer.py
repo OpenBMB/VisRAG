@@ -56,7 +56,7 @@ def answer_question(images, question):
     return answer
 
 model_path = 'I:\Term8\GraduationPJ\RAG\VisRAG\LocalModels\VisRAG-Ret'
-# gen_model_path = 'openbmb/MiniCPM-V-2_6'
+gen_model_path = 'openbmb/MiniCPM-V-2_6'
 
 device = 'cuda'
 
@@ -77,13 +77,13 @@ model.to(device)
 print("VisRAG-Ret load success!")
 
 
-# print("VisRAG-Gen (MiniCPM-V-2_6) load begin...")
-# gen_tokenizer = AutoTokenizer.from_pretrained(gen_model_path, attn_implementation='sdpa', trust_remote_code=True)
-# gen_model = AutoModel.from_pretrained(gen_model_path, trust_remote_code=True,
-#     attn_implementation='sdpa', torch_dtype=torch.bfloat16)
-# gen_model.eval()
-# gen_model.to(device)
-# print("VisRAG-Gen (MiniCPM-V-2_6) load success!")
+print("VisRAG-Gen (MiniCPM-V-2_6) load begin...")
+gen_tokenizer = AutoTokenizer.from_pretrained(gen_model_path, attn_implementation='sdpa', trust_remote_code=True)
+gen_model = AutoModel.from_pretrained(gen_model_path, trust_remote_code=True,
+    attn_implementation='sdpa', torch_dtype=torch.bfloat16)
+gen_model.eval()
+gen_model.to(device)
+print("VisRAG-Gen (MiniCPM-V-2_6) load success!")
 
 while True:
     query = input("Enter your query: ")
@@ -91,8 +91,8 @@ while True:
     topk = conf.TOP_K
     images_path_topk = retrieve(knowledge_base_path, query, topk)
     images_topk = [Image.open(i) for i in images_path_topk]
-    # answer = answer_question(images_path_topk, query)
-    answer = deepseek_answer_question(images_path_topk, query)
+    answer = answer_question(images_path_topk, query)
+    # answer = deepseek_answer_question(images_path_topk, query)
     print(answer)
 
     # save context to a json in the knowledge base/answer folder, add a timestamp to the filename
