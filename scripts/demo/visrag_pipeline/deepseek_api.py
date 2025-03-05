@@ -36,5 +36,5 @@ def deepseek_answer_question(image_paths, question):
     ans = response.choices[0].message.content
     return ans
 
-ans = deepseek_answer_question(["I:\\Term8\\GraduationPJ\\RAG\\VisRAG\\scripts\\demo\\datastore\\resume.pdf_0.png"], "What is the name of the person in the resume?")
-print(ans)
+# ans = deepseek_answer_question(["scripts/demo/datastore/resume.pdf_0.png"], "What is the name of the person in the resume?")
+# print(ans)
