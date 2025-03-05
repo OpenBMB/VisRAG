@@ -10,6 +10,7 @@ import torch
 import os
 import numpy as np
 from utils import encode
+import conf
 
 def add_pdfs(pdf_dir):
     global model, tokenizer, knowledge_base_path
@@ -63,20 +64,22 @@ model_path = 'openbmb/VisRAG-Ret'
 
 device = 'cuda'
 
-while(True):
-    knowledge_base_path = input("Please enter the knowledge base path in which we build the index: ")
-    if os.path.isabs(knowledge_base_path):
-        break
-    else:
-        print("Invalid knowledge base path, please try again.")
+# while(True):
+#     knowledge_base_path = input("Please enter the knowledge base path in which we build the index: ")
+#     if os.path.isabs(knowledge_base_path):
+#         break
+#     else:
+#         print("Invalid knowledge base path, please try again.")
+knowledge_base_path = conf.DATASTORE
 os.makedirs(knowledge_base_path, exist_ok=True)
 
-while(True):
-    pdf_dir = input("Enter the directory that contains the pdf files: ")
-    if os.path.isdir(pdf_dir):
-        break
-    else:
-        print("Invalid pdf directory, please try again.") 
+# while(True):
+#     pdf_dir = input("Enter the directory that contains the pdf files: ")
+#     if os.path.isdir(pdf_dir):
+#         break
+#     else:
+#         print("Invalid pdf directory, please try again.") 
+pdf_dir = conf.PDF_DIR
 
 print("emb model load begin...")
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)

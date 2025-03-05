@@ -10,6 +10,8 @@ import numpy as np
 import json
 import datetime
 from utils import encode
+import conf
+from deepseek_api import deepseek_answer_question
 
 def retrieve(knowledge_base_path: str, query: str, topk: int):
     global model, tokenizer
@@ -53,17 +55,18 @@ def answer_question(images, question):
     )
     return answer
 
-model_path = 'openbmb/VisRAG-Ret'
-gen_model_path = 'openbmb/MiniCPM-V-2_6'
+model_path = 'I:\Term8\GraduationPJ\RAG\VisRAG\LocalModels\VisRAG-Ret'
+# gen_model_path = 'openbmb/MiniCPM-V-2_6'
 
 device = 'cuda'
 
-while(True):
-    knowledge_base_path = input("Enter the knowledge base path: ")
-    if os.path.exists(knowledge_base_path):
-        break
-    else:
-        print("Invalid knowledge base path, please try again.")
+# while(True):
+#     knowledge_base_path = input("Enter the knowledge base path: ")
+#     if os.path.exists(knowledge_base_path):
+#         break
+#     else:
+#         print("Invalid knowledge base path, please try again.")
+knowledge_base_path = conf.DATASTORE
 
 print("VisRAG-Ret load begin...")
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
@@ -73,20 +76,23 @@ model.eval()
 model.to(device)
 print("VisRAG-Ret load success!")
 
-print("VisRAG-Gen (MiniCPM-V-2_6) load begin...")
-gen_tokenizer = AutoTokenizer.from_pretrained(gen_model_path, attn_implementation='sdpa', trust_remote_code=True)
-gen_model = AutoModel.from_pretrained(gen_model_path, trust_remote_code=True,
-    attn_implementation='sdpa', torch_dtype=torch.bfloat16)
-gen_model.eval()
-gen_model.to(device)
-print("VisRAG-Gen (MiniCPM-V-2_6) load success!")
+
+# print("VisRAG-Gen (MiniCPM-V-2_6) load begin...")
+# gen_tokenizer = AutoTokenizer.from_pretrained(gen_model_path, attn_implementation='sdpa', trust_remote_code=True)
+# gen_model = AutoModel.from_pretrained(gen_model_path, trust_remote_code=True,
+#     attn_implementation='sdpa', torch_dtype=torch.bfloat16)
+# gen_model.eval()
+# gen_model.to(device)
+# print("VisRAG-Gen (MiniCPM-V-2_6) load success!")
 
 while True:
     query = input("Enter your query: ")
-    topk = int(input("Enter the number of documents to retrieve: "))
+    # topk = int(input("Enter the number of documents to retrieve: "))
+    topk = conf.TOP_K
     images_path_topk = retrieve(knowledge_base_path, query, topk)
     images_topk = [Image.open(i) for i in images_path_topk]
-    answer = answer_question(images_topk, query)
+    # answer = answer_question(images_path_topk, query)
+    answer = deepseek_answer_question(images_path_topk, query)
     print(answer)
 
     # save context to a json in the knowledge base/answer folder, add a timestamp to the filename
