@@ -12,6 +12,9 @@ import datetime
 from utils import encode
 import conf
 from deepseek_api import deepseek_answer_question
+from transformers import Qwen2VLForConditionalGeneration, AutoTokenizer, AutoProcessor
+from qwen_vl_utils import process_vision_info
+from qwen_gen import qwen_answer_question
 
 def retrieve(knowledge_base_path: str, query: str, topk: int):
     global model, tokenizer
@@ -55,8 +58,9 @@ def answer_question(images, question):
     )
     return answer
 
-model_path = '/home/bingxing2/home/scx7655/workspace/LocalModles/VisRAG-Ret'
-gen_model_path = '/home/bingxing2/home/scx7655/workspace/LocalModles/MiniCPM-V-2_6'
+model_path = 'openbmb/VisRAG-Ret'
+# gen_model_path = 'openbmb/MiniCPM-V-2_6'
+gen_model_path = 'Qwen/Qwen2-VL-2B-Instruct'
 
 device = 'cuda'
 
@@ -69,21 +73,21 @@ device = 'cuda'
 knowledge_base_path = conf.DATASTORE
 
 print("VisRAG-Ret load begin...")
-tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
+tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True,cache_dir=conf.CACHE_DIR)
 model = AutoModel.from_pretrained(model_path, trust_remote_code=True,
-    attn_implementation='sdpa', torch_dtype=torch.bfloat16)
+    attn_implementation='sdpa', torch_dtype=torch.bfloat16, cache_dir=conf.CACHE_DIR)
 model.eval()
 model.to(device)
 print("VisRAG-Ret load success!")
 
 
-print("VisRAG-Gen (MiniCPM-V-2_6) load begin...")
-gen_tokenizer = AutoTokenizer.from_pretrained(gen_model_path, attn_implementation='sdpa', trust_remote_code=True)
-gen_model = AutoModel.from_pretrained(gen_model_path, trust_remote_code=True,
-    attn_implementation='sdpa', torch_dtype=torch.bfloat16)
-gen_model.eval()
-gen_model.to(device)
-print("VisRAG-Gen (MiniCPM-V-2_6) load success!")
+# print(f"VisRAG-Gen({gen_model_path}) load begin...")
+# gen_tokenizer = AutoTokenizer.from_pretrained(gen_model_path, attn_implementation='sdpa', trust_remote_code=True,cache_dir=conf.CACHE_DIR)
+# gen_model = AutoModel.from_pretrained(gen_model_path, trust_remote_code=True,
+#     attn_implementation='sdpa', torch_dtype=torch.bfloat16,cache_dir=conf.CACHE_DIR)
+# gen_model.eval()
+# gen_model.to(device)
+# print(f"VisRAG-Gen({gen_model_path}) load success!")
 
 while True:
     query = input("Enter your query: ")
@@ -91,8 +95,8 @@ while True:
     topk = conf.TOP_K
     images_path_topk = retrieve(knowledge_base_path, query, topk)
     images_topk = [Image.open(i) for i in images_path_topk]
-    answer = answer_question(images_path_topk, query)
-    # answer = deepseek_answer_question(images_path_topk, query)
+    # answer = answer_question(images_path_topk, query)
+    answer = qwen_answer_question(images_path_topk, query)
     print(answer)
 
     # save context to a json in the knowledge base/answer folder, add a timestamp to the filename
@@ -101,10 +105,10 @@ while True:
     os.makedirs(answer_path, exist_ok=True)
     with open(os.path.join(answer_path, f"answer.json"), 'w') as f:
         f.write(json.dumps({'query': query, 'retrieved_images': images_path_topk, 'answer': answer}, indent=4, ensure_ascii=False))
-    # save images
-    for idx, image in enumerate(images_topk):
-        image.save(os.path.join(answer_path, os.path.basename(images_path_topk[idx])))
-    print(f"Answer saved at {answer_path}/{timestamp}.json")
+    # # save images
+    # for idx, image in enumerate(images_topk):
+    #     image.save(os.path.join(answer_path, os.path.basename(images_path_topk[idx])))
+    # print(f"Answer saved at {answer_path}/{timestamp}.json")
         
 
     cont = input("Do you want to continue? (y/n): ")

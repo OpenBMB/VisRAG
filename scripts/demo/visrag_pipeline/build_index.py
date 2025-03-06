@@ -82,9 +82,9 @@ os.makedirs(knowledge_base_path, exist_ok=True)
 pdf_dir = conf.PDF_DIR
 
 print("emb model load begin...")
-tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
+tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True, cache_dir=conf.CACHE_DIR)
 model = AutoModel.from_pretrained(model_path, trust_remote_code=True,
-    attn_implementation='sdpa', torch_dtype=torch.bfloat16)
+    attn_implementation='sdpa', torch_dtype=torch.bfloat16, cache_dir=conf.CACHE_DIR)
 model.eval()
 model.to(device)
 print("emb model load success!")
