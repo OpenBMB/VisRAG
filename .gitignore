@@ -171,5 +171,7 @@ kb/
 /checkpoints
 /wandb
 /tensorboard
-
+slurm-*
 .DS_Store
+scripts/demo/pdf_materials/
+scripts/demo/datastore/

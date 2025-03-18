@@ -12,7 +12,7 @@ import datetime
 from utils import encode
 import conf
 from deepseek_api import deepseek_answer_question
-from transformers import Qwen2VLForConditionalGeneration, AutoTokenizer, AutoProcessor
+from transformers import AutoTokenizer, AutoProcessor
 from qwen_vl_utils import process_vision_info
 from qwen_gen import qwen_answer_question
 
@@ -90,7 +90,8 @@ print("VisRAG-Ret load success!")
 # print(f"VisRAG-Gen({gen_model_path}) load success!")
 
 while True:
-    query = input("Enter your query: ")
+    # query = input("Enter your query: ")
+    query = "在chisel中，我做了ALU，该怎么去做处理相应的译码指令？"
     # topk = int(input("Enter the number of documents to retrieve: "))
     topk = conf.TOP_K
     images_path_topk = retrieve(knowledge_base_path, query, topk)
@@ -110,8 +111,8 @@ while True:
     #     image.save(os.path.join(answer_path, os.path.basename(images_path_topk[idx])))
     # print(f"Answer saved at {answer_path}/{timestamp}.json")
         
-
-    cont = input("Do you want to continue? (y/n): ")
-    if cont.lower() != 'y':
-        print("Goodbye!")
-        break
+    break
+    # cont = input("Do you want to continue? (y/n): ")
+    # if cont.lower() != 'y':
+    #     print("Goodbye!")
+    #     break

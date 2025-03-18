@@ -26,10 +26,10 @@ def qwen_answer_question(images_path_topk, query):
 
     img_path = images_path_topk[0]
     # 先处理一下img的大小，resize成224*224
-    from PIL import Image
-    img = Image.open(img_path)
-    img = img.resize((224, 224))
-    img.save(img_path)
+    # from PIL import Image
+    # img = Image.open(img_path)
+    # img = img.resize((224, 224))
+    # img.save(img_path)
     messages = [
         {
             "role": "user",
@@ -65,5 +65,4 @@ def qwen_answer_question(images_path_topk, query):
     output_text = processor.batch_decode(
         generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
     )
-    print(output_text)
     return output_text[0]
