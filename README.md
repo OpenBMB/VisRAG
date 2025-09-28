@@ -1,11 +1,12 @@
-# VisRAG: Vision-based Retrieval-augmented Generation on Multi-modality Documents
+# Evolution of VisRAG: Evidence-Guided Multi-Image Reasoning in Visual Retrieval-Augmented Generation
 [![Github](https://img.shields.io/badge/VisRAG-000000?style=for-the-badge&logo=github&logoColor=000&logoColor=white)](https://github.com/OpenBMB/VisRAG)
-[![Google Colab](https://img.shields.io/badge/VisRAG_Pipeline-ffffff?style=for-the-badge&logo=googlecolab&logoColor=f9ab00)](https://colab.research.google.com/drive/11KV9adDNXPfHiuFAfXNOvtYJKcyR8JZH?usp=sharing)
 [![arXiv](https://img.shields.io/badge/arXiv-2410.10594-ff0000.svg?style=for-the-badge)](https://arxiv.org/abs/2410.10594)
+[![arXiv](https://img.shields.io/badge/arXiv-2410.10594-ff0000.svg?style=for-the-badge)](https://arxiv.org/abs/2410.10594)
+[![Hugging Face](https://img.shields.io/badge/EvisRAG-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/openbmb/EVisRAG)
 [![Hugging Face](https://img.shields.io/badge/VisRAG_Ret-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/openbmb/VisRAG-Ret)
 [![Hugging Face](https://img.shields.io/badge/VisRAG_Collection-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/collections/openbmb/visrag-6717bbfb471bb018a49f1c69)
 [![Hugging Face](https://img.shields.io/badge/VisRAG_Pipeline-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/spaces/tcy6/VisRAG_Pipeline)
-
+[![Google Colab](https://img.shields.io/badge/VisRAG_Pipeline-ffffff?style=for-the-badge&logo=googlecolab&logoColor=f9ab00)](https://colab.research.google.com/drive/11KV9adDNXPfHiuFAfXNOvtYJKcyR8JZH?usp=sharing)
 <p align="center">•
  <a href="#-introduction"> 📖 Introduction </a> •
  <a href="#-news">🎉 News</a> •
@@ -22,18 +23,22 @@
 </p>
 
 # 📖 Introduction
+**EVisRAG (VisRAG2.0)** is an evidence-guided Vision Retrieval-augmented Generation framework that equips VLMs for multi-image questions by first linguistically observing retrieved images to collect per-image evidence, then reasoning over those cues to answer. **EVisRAG** trains with Reward-Scoped GRPO, applying fine-grained token-level rewards to jointly optimize visual perception and reasoning.
+<p align="center"><img width=800 src="assets/evisrag.pdf"/></p>
+
 **VisRAG** is a novel vision-language model (VLM)-based RAG pipeline. In this pipeline, instead of first parsing the document to obtain text, the document is directly embedded using a VLM as an image and then retrieved to enhance the generation of a VLM. Compared to traditional text-based RAG, **VisRAG** maximizes the retention and utilization of the data information in the original documents, eliminating the information loss introduced during the parsing process.
 <p align="center"><img width=800 src="assets/main_figure.png"/></p>
 
 # 🎉 News
-
-* 20241111: Released our [VisRAG Pipeline](https://github.com/OpenBMB/VisRAG/tree/master/scripts/demo/visrag_pipeline) on GitHub, now supporting visual understanding across multiple PDF documents.
+* 20251001: Released **EVisRAG (VisRAG2.0)**, an end-to-end Vision-Language Model. Released our [Paper]() on arXiv. Released our [Model]() on Hugging Face. Released our [Code](https://github.com/OpenBMB/VisRAG) on GitHub
+* 20241111: Released our [VisRAG Pipeline](https://github.com/OpenBMB/VisRAG/tree/master/visrag_scripts/demo/visrag_pipeline) on GitHub, now supporting visual understanding across multiple PDF documents.
 * 20241104: Released our [VisRAG Pipeline](https://huggingface.co/spaces/tcy6/VisRAG_Pipeline) on Hugging Face Space.
-* 20241031: Released our [VisRAG Pipeline](https://colab.research.google.com/drive/11KV9adDNXPfHiuFAfXNOvtYJKcyR8JZH?usp=sharing) on Colab. Released codes for converting files to images which could be found at `scripts/file2img`.
+* 20241031: Released our [VisRAG Pipeline](https://colab.research.google.com/drive/11KV9adDNXPfHiuFAfXNOvtYJKcyR8JZH?usp=sharing) on Colab. Released codes for converting files to images which could be found at `visrag_scripts/file2img`.
 * 20241015: Released our train data and test data on Hugging Face which can be found in the [VisRAG](https://huggingface.co/collections/openbmb/visrag-6717bbfb471bb018a49f1c69) Collection on Hugging Face. It is referenced at the beginning of this page.
 * 20241014: Released our [Paper](https://arxiv.org/abs/2410.10594) on arXiv. Released our [Model](https://huggingface.co/openbmb/VisRAG-Ret) on Hugging Face. Released our [Code](https://github.com/OpenBMB/VisRAG) on GitHub.
 
 # ✨ VisRAG Pipeline
+## EVisRAG
 
 ## VisRAG-Ret
 
@@ -44,7 +49,10 @@
 In the paper, We use MiniCPM-V 2.0, MiniCPM-V 2.6 and GPT-4o as the generators. Actually, you can use any VLMs you like!
 
 # ⚙️ Setup
-
+## EVisRAG
+```bash
+```
+## VisRAG
 ```bash
 git clone https://github.com/OpenBMB/VisRAG.git
 conda create --name VisRAG python==3.10.8
@@ -61,13 +69,13 @@ Note:
 1. `timm_modified` is an enhanced version of the `timm` library that supports gradient checkpointing, which we use in our training process to reduce memory usage.
 
 # ⚡️ Training
-
+## EVisRAG
 ## VisRAG-Ret
 
 Our training dataset of 362,110 Query-Document (Q-D) Pairs for **VisRAG-Ret** is comprised of train sets of openly available academic datasets (34%) and a synthetic dataset made up of pages from web-crawled PDF documents and augmented with VLM-generated (GPT-4o) pseudo-queries (66%). 
 
 ```bash
-bash scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspeed.json 1e-5 false wmean causal 1 true 2 false <model_dir> <repo_name_or_path>
+bash visrag_scripts/train_retriever/train.sh 2048 16 8 0.02 1 true false config/deepspeed.json 1e-5 false wmean causal 1 true 2 false <model_dir> <repo_name_or_path>
 ```
 Note:
 1. Our training data can be found in the `VisRAG` collection on Hugging Face, referenced at the beginning of this page. Please note that we have separated the `In-domain-data` and `Synthetic-data` due to their distinct differences. If you wish to train with the complete dataset, you’ll need to merge and shuffle them manually.
@@ -81,10 +89,13 @@ Note:
 The generation part does not use any fine-tuning, we directly use off-the-shelf LLMs/VLMs for generation.
 
 # 📃 Evaluation
+## EVisRAG
+```bash
+```
 
 ## VisRAG-Ret
 ```bash
-bash scripts/eval_retriever/eval.sh 512 2048 16 8 wmean causal ArxivQA,ChartQA,MP-DocVQA,InfoVQA,PlotQA,SlideVQA <ckpt_path>
+bash visrag_scripts/eval_retriever/eval.sh 512 2048 16 8 wmean causal ArxivQA,ChartQA,MP-DocVQA,InfoVQA,PlotQA,SlideVQA <ckpt_path>
 ```
 
 Note: 
@@ -95,7 +106,7 @@ Note:
 ## VisRAG-Gen
 There are three settings in our generation: text-based generation, single-image-VLM-based generation and multi-image-VLM-based generation. Under single-image-VLM-based generation, there are two additional settings: page concatenation and weighted selection. For detailed information about these settings, please refer to our paper.
 ```bash
-python scripts/generate/generate.py \
+python visrag_scripts/generate/generate.py \
 --model_name <model_name> \
 --model_name_or_path <model_path> \
 --dataset_name <dataset_name> \
@@ -115,6 +126,8 @@ Note:
 4. Use `--openai_api_key` only if GPT-based evaluation is needed.
 
 # 🔧 Usage
+## EVisRAG
+
 
 ## VisRAG-Ret
 
@@ -189,7 +202,11 @@ For `VisRAG-Gen`, you can explore the `VisRAG Pipeline` on Google Colab which in
 * The models and weights of **VisRAG-Ret** are completely free for academic research. After filling out a ["questionnaire"](https://modelbest.feishu.cn/share/base/form/shrcnpV5ZT9EJ6xYjh3Kx0J6v8g) for registration, **VisRAG-Ret** weights are also available for free commercial use.
 
 # 📧 Contact
-
+## EVisRAG
+- Yubo Sun:
+- Chunyi Peng: hm.cypeng@gmail.com
+- 
+## VisRAG
 - Shi Yu: yus21@mails.tsinghua.edu.cn
 - Chaoyue Tang: tcy006@gmail.com
 
