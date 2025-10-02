@@ -1,0 +1,64 @@
+name: tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "**/*.py"
+      - "**/requirements*.txt"
+      - ".github/workflows/*.yml"
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "**/*.py"
+      - "**/requirements*.txt"
+      - ".github/workflows/*.yml"
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.11"
+        os:
+          - "ubuntu-latest"
+
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os }}-${{ matrix.python-version }}
+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+          cache-dependency-path: "**/requirements*.txt"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r .github/requirements-test.txt
+          python -m pip install --no-deps .
+
+      - name: Check quality
+        run: |
+          make style && make quality
+
+      - name: Check license
+        run: |
+          make license
+
+      - name: Test with pytest
+        run: |
+          make test
