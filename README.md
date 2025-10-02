@@ -1,4 +1,4 @@
-# Evolution of VisRAG: Evidence-Guided Multi-Image Reasoning in Visual Retrieval-Augmented Generation
+# VisRAG 2.0: Evidence-Guided Multi-Image Reasoning in Visual Retrieval-Augmented Generation
 [![Github](https://img.shields.io/badge/VisRAG-000000?style=for-the-badge&logo=github&logoColor=000&logoColor=white)](https://github.com/OpenBMB/VisRAG)
 [![arXiv](https://img.shields.io/badge/arXiv-2410.10594-ff0000.svg?style=for-the-badge)](https://arxiv.org/abs/2410.10594)
 [![arXiv](https://img.shields.io/badge/arXiv-2410.10594-ff0000.svg?style=for-the-badge)](https://arxiv.org/abs/2410.10594)
@@ -24,16 +24,19 @@
 </p>
 
 # 📖 Introduction
-**EVisRAG (VisRAG2.0)** is an evidence-guided Vision Retrieval-augmented Generation framework that equips VLMs for multi-image questions by first linguistically observing retrieved images to collect per-image evidence, then reasoning over those cues to answer. **EVisRAG** trains with Reward-Scoped GRPO, applying fine-grained token-level rewards to jointly optimize visual perception and reasoning.
+**EVisRAG (VisRAG 2.0)** is an evidence-guided Vision Retrieval-augmented Generation framework that equips VLMs for multi-image questions by first linguistically observing retrieved images to collect per-image evidence, then reasoning over those cues to answer. **EVisRAG** trains with Reward-Scoped GRPO, applying fine-grained token-level rewards to jointly optimize visual perception and reasoning.
 
 <p align="center"><img width=800 src="assets/evisrag.png"/></p>
+
 
 **VisRAG** is a novel vision-language model (VLM)-based RAG pipeline. In this pipeline, instead of first parsing the document to obtain text, the document is directly embedded using a VLM as an image and then retrieved to enhance the generation of a VLM. Compared to traditional text-based RAG, **VisRAG** maximizes the retention and utilization of the data information in the original documents, eliminating the information loss introduced during the parsing process.
 
 <p align="center"><img width=800 src="assets/main_figure.png"/></p>
 
 # 🎉 News
-* 20251001: Released **EVisRAG (VisRAG2.0)**, an end-to-end Vision-Language Model. Released our [Paper]() on arXiv. Released our [Model](https://huggingface.co/openbmb/EVisRAG-7B) on Hugging Face. Released our [Code](https://github.com/OpenBMB/VisRAG) on GitHub
+
+* 20251001: Released **EVisRAG (VisRAG 2.0)**, an end-to-end Vision-Language Model. Released our [Paper]() on arXiv. Released our [Model](https://huggingface.co/openbmb/EVisRAG-7B) on Hugging Face. Released our [Code](https://github.com/OpenBMB/VisRAG) on GitHub
+
 * 20241111: Released our [VisRAG Pipeline](https://github.com/OpenBMB/VisRAG/tree/master/visrag_scripts/demo/visrag_pipeline) on GitHub, now supporting visual understanding across multiple PDF documents.
 * 20241104: Released our [VisRAG Pipeline](https://huggingface.co/spaces/tcy6/VisRAG_Pipeline) on Hugging Face Space.
 * 20241031: Released our [VisRAG Pipeline](https://colab.research.google.com/drive/11KV9adDNXPfHiuFAfXNOvtYJKcyR8JZH?usp=sharing) on Colab. Released codes for converting files to images which could be found at `visrag_scripts/file2img`.
@@ -51,7 +54,7 @@
 
 ## VisRAG-Gen
 
-In the paper, We use MiniCPM-V 2.0, MiniCPM-V 2.6 and GPT-4o as the generators. Actually, you can use any VLMs you like!
+In the paper, we use MiniCPM-V 2.0, MiniCPM-V 2.6, and GPT-4o as the generators. Actually, you can use any VLMs you like!
 
 # ⚙️ Setup
 ## EVisRAG
