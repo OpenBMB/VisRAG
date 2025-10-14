@@ -86,6 +86,10 @@ Note:
 # ⚡️ Training
 ## EVisRAG
 
+To train EVisRAG effectively, we introduce Reward-Scoped Group Relative Policy Optimization (RS-GRPO), which binds fine-grained rewards to scope-specific tokens to jointly optimize visual perception and reasoning abilities of VLMs.
+
+<p align="center"><img width=800 src="assets/rsgrpo.png"/></p>
+
 ***Stage1: SFT*** (based on [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory))
 
 ```bash
