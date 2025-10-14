@@ -35,6 +35,8 @@
 
 # 🎉 News
 
+* 20251014: Released [EVisRAG-3B](https://huggingface.co/openbmb/EVisRAG-3B) on Hugging Face Space.
+
 * 20251001: Released **EVisRAG (VisRAG 2.0)**, an end-to-end Vision-Language Model. Released our [Paper]() on arXiv. Released our [Model](https://huggingface.co/openbmb/EVisRAG-7B) on Hugging Face. Released our [Code](https://github.com/OpenBMB/VisRAG) on GitHub
 
 * 20241111: Released our [VisRAG Pipeline](https://github.com/OpenBMB/VisRAG/tree/master/visrag_scripts/demo/visrag_pipeline) on GitHub, now supporting visual understanding across multiple PDF documents.
