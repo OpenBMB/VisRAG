@@ -37,7 +37,7 @@
 
 * 20251018: We add a temporary [model repo](https://huggingface.co/Boggy666/EVisRAG-7B) on Hugging Face.
 * 20251014: Released [EVisRAG-3B](https://huggingface.co/openbmb/EVisRAG-3B) on HuggingFace.
-* 20251014: Released **EVisRAG (VisRAG 2.0)**, an end-to-end Vision-Language Model. Released our [Paper]() on arXiv. Released our [Model](https://huggingface.co/openbmb/EVisRAG-7B) on HuggingFace. Released our [Code](https://github.com/OpenBMB/VisRAG) on GitHub
+* 20251014: Released **EVisRAG (VisRAG 2.0)**, an end-to-end Vision-Language Model. Released our [Paper](https://arxiv.org/abs/2510.09733) on arXiv. Released our [Model](https://huggingface.co/openbmb/EVisRAG-7B) on HuggingFace. Released our [Code](https://github.com/OpenBMB/VisRAG) on GitHub
 * 20241111: Released our [VisRAG Pipeline](https://github.com/OpenBMB/VisRAG/tree/master/visrag_scripts/demo/visrag_pipeline) on GitHub, now supporting visual understanding across multiple PDF documents.
 * 20241104: Released our [VisRAG Pipeline](https://huggingface.co/spaces/tcy6/VisRAG_Pipeline) on Hugging Face Space.
 * 20241031: Released our [VisRAG Pipeline](https://colab.research.google.com/drive/11KV9adDNXPfHiuFAfXNOvtYJKcyR8JZH?usp=sharing) on Colab. Released codes for converting files to images, which could be found at `visrag_scripts/file2img`.
@@ -47,7 +47,7 @@
 # ✨ VisRAG Pipeline
 ## EVisRAG
 
-**EVisRAG** is an end-to-end framework which equips VLMs with precise visual perception during reasoning in multi-image scenarios. We trained and realeased VLRMs with EVisRAG built on [Qwen2.5-VL-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct), and [Qwen2.5-VL-3B-Instruct](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct).
+**EVisRAG** is an end-to-end framework that equips VLMs with precise visual perception during reasoning in multi-image scenarios. We trained and released VLRMs with EVisRAG built on [Qwen2.5-VL-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct), and [Qwen2.5-VL-3B-Instruct](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct).
 
 ## VisRAG-Ret
 
