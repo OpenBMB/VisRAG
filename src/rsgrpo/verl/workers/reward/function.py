@@ -132,14 +132,10 @@ class BatchFunctionRewardManager(FunctionRewardManager):
                 reward_mask_tokens.append(("<think>", "<answer>"))
 
         def find_first_subsequence(a: torch.Tensor, sub: torch.Tensor):
-            """
-            在a（一维tensor）中滑窗查找sub，返回第一个完全匹配的起始位置（没有则返回a.shape[0]）
-            """
             n = a.shape[0]
             m = sub.shape[0]
             if m > n:
                 return -1
-            # 滑窗比较
             for i in range(n - m + 1):
                 if torch.equal(a[i:i + m], sub):
                     return i
@@ -154,8 +150,6 @@ class BatchFunctionRewardManager(FunctionRewardManager):
 
         reward_masks = data.batch["response_mask"]
         reward_masks = reward_masks.unsqueeze(1).repeat(1, n_rewards, 1)
-        st_idxs = torch.full((bts,), seq_len, dtype=torch.long, device=response_ids.device)  # 默认没找到
-        ed_idxs = torch.full((bts,), seq_len, dtype=torch.long, device=response_ids.device)  # 默认没找到
 
         for i in range(len(data)):
             cur_response_length = int(response_length[i].item())  # avoid tensor indexing error
@@ -172,10 +166,9 @@ class BatchFunctionRewardManager(FunctionRewardManager):
 
                     idx = find_first_subsequence(response_ids[i], st_token_ids)
                     if idx == -1: idx = 0
-                    st_idxs[i] = idx
-
-                    sequence_indices = torch.arange(seq_len, device=response_ids.device).expand(bts, seq_len)
-                    st_mask = (sequence_indices >= st_idxs.unsqueeze(1)).int()
+                    
+                    sequence_indices = torch.arange(seq_len, device=response_ids.device)
+                    st_mask = (sequence_indices >= idx).int()
                 
                 if ed_token != "end":
                     ed_token_ids = self.tokenizer.encode(ed_token, add_special_tokens=False)
@@ -183,15 +176,14 @@ class BatchFunctionRewardManager(FunctionRewardManager):
 
                     idx = find_first_subsequence(response_ids[i], ed_token_ids)
                     if idx == -1: idx = seq_len
-                    ed_idxs[i] = idx
-
-                    sequence_indices = torch.arange(seq_len, device=response_ids.device).expand(bts, seq_len)
-                    ed_mask = (sequence_indices < ed_idxs.unsqueeze(1)).int()
+ 
+                    sequence_indices = torch.arange(seq_len, device=response_ids.device)
+                    ed_mask = (sequence_indices < idx).int()
 
                 if st_mask is not None:
-                    reward_masks[:,i_reward,:] *= st_mask
+                    reward_masks[i,i_reward,:] *= st_mask
                 if ed_mask is not None:
-                    reward_masks[:,i_reward,:] *= ed_mask
+                    reward_masks[i,i_reward,:] *= ed_mask
 
             reward_inputs.append(
                 {
