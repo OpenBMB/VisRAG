@@ -35,6 +35,7 @@
 
 # 🎉 News
 
+* 20251020: We upload a temporary [EVisRAG-Train](https://huggingface.co/datasets/hmhm1229/EVisRAG-Train) on Hugging Face.
 * 20251018: We add a temporary [model repo](https://huggingface.co/Boggy666/EVisRAG-7B) on Hugging Face.
 * 20251014: Released [EVisRAG-3B](https://huggingface.co/openbmb/EVisRAG-3B) on HuggingFace.
 * 20251014: Released **EVisRAG (VisRAG 2.0)**, an end-to-end Vision-Language Model. Released our [Paper](https://arxiv.org/abs/2510.09733) on arXiv. Released our [Model](https://huggingface.co/openbmb/EVisRAG-7B) on HuggingFace. Released our [Code](https://github.com/OpenBMB/VisRAG) on GitHub
