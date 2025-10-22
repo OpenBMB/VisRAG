@@ -35,6 +35,7 @@
 
 # 🎉 News
 
+* 20251022: We upload all evaluation benchmarks in [VisRAG Collections](https://huggingface.co/collections/openbmb/visrag-6717bbfb471bb018a49f1c69) 
 * 20251020: We upload a temporary [EVisRAG-Train](https://huggingface.co/datasets/hmhm1229/EVisRAG-Train) on Hugging Face.
 * 20251018: We add a temporary [model repo](https://huggingface.co/Boggy666/EVisRAG-7B) on Hugging Face.
 * 20251014: Released [EVisRAG-3B](https://huggingface.co/openbmb/EVisRAG-3B) on HuggingFace.
