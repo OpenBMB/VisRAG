@@ -2,7 +2,7 @@
 [![Github](https://img.shields.io/badge/VisRAG-000000?style=for-the-badge&logo=github&logoColor=000&logoColor=white)](https://github.com/OpenBMB/VisRAG)
 [![arXiv](https://img.shields.io/badge/arXiv-2510.09733-ff0000.svg?style=for-the-badge)](https://arxiv.org/abs/2510.09733)
 [![arXiv](https://img.shields.io/badge/arXiv-2410.10594-ff0000.svg?style=for-the-badge)](https://arxiv.org/abs/2410.10594)
-[![Hugging Face](https://img.shields.io/badge/EvisRAG-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/Boggy666/EVisRAG-7B)
+[![Hugging Face](https://img.shields.io/badge/EvisRAG-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/openbmb/EVisRAG-7B)
 [![Hugging Face](https://img.shields.io/badge/VisRAG_Ret-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/openbmb/VisRAG-Ret)
 [![Hugging Face](https://img.shields.io/badge/VisRAG_Collection-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/collections/openbmb/visrag-6717bbfb471bb018a49f1c69)
 [![Hugging Face](https://img.shields.io/badge/VisRAG_Pipeline-fcd022?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/spaces/tcy6/VisRAG_Pipeline)
@@ -35,10 +35,9 @@
 
 # 🎉 News
 
+* 20251207: Released all [benchmarks](https://huggingface.co/collections/openbmb/visrag) on HuggingFace.
 * 20251118: Both EVisRAG and VisRAG can be easily reproduced within [UltraRAG v2](https://github.com/OpenBMB/UltraRAG).
 * 20251022: We upload all evaluation benchmarks in [VisRAG Collections](https://huggingface.co/collections/openbmb/visrag-6717bbfb471bb018a49f1c69) 
-* 20251020: We upload a temporary [EVisRAG-Train](https://huggingface.co/datasets/hmhm1229/EVisRAG-Train) on Hugging Face.
-* 20251018: We add a temporary [model repo](https://huggingface.co/Boggy666/EVisRAG-7B) on Hugging Face.
 * 20251014: Released [EVisRAG-3B](https://huggingface.co/openbmb/EVisRAG-3B) on HuggingFace.
 * 20251014: Released **EVisRAG (VisRAG 2.0)**, an end-to-end Vision-Language Model. Released our [Paper](https://arxiv.org/abs/2510.09733) on arXiv. Released our [Model](https://huggingface.co/openbmb/EVisRAG-7B) on HuggingFace. Released our [Code](https://github.com/OpenBMB/VisRAG) on GitHub
 * 20241111: Released our [VisRAG Pipeline](https://github.com/OpenBMB/VisRAG/tree/master/visrag_scripts/demo/visrag_pipeline) on GitHub, now supporting visual understanding across multiple PDF documents.
