@@ -19,7 +19,7 @@
 <p align="center">•
  <a href="#-evaluation">📃 Evaluation</a> •
  <a href="#-usage">🔧 Usage</a> •
- <a href="#-license">📄 Lisense</a> •
+ <a href="#-license">📄 License</a> •
  <a href="#-contact">📧 Contact</a> •
  <a href="#-star-history">📈 Star History</a>
 </p>
@@ -67,7 +67,7 @@ In the paper, we use MiniCPM-V 2.0, MiniCPM-V 2.6, and GPT-4o as the generators.
 git clone https://github.com/OpenBMB/VisRAG.git
 conda create --name EVisRAG python==3.10
 conda activate EVisRAG
-cd EVisRAG
+cd VisRAG
 pip install -r EVisRAG_requirements.txt
 ```
 ## VisRAG
@@ -160,7 +160,7 @@ python visrag_scripts/generate/generate.py \
 --model_name_or_path <model_path> \
 --dataset_name <dataset_name> \
 --dataset_name_or_path <dataset_path> \
---rank <process_rank> \ 
+--rank <process_rank> \
 --world_size <world_size> \
 --topk <number of docs retrieved for generation> \
 --results_root_dir <retrieval_results_dir> \
